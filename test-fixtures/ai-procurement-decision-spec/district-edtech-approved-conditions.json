@@ -1,0 +1,154 @@
+{
+  "decision_card_version": "0.1",
+  "decision_id": "SPRINGFIELD-DEC-2026-001",
+  "issued_at": "2026-05-14T19:00:00Z",
+
+  "buyer": {
+    "name": "Springfield Unified School District",
+    "type": "school-district",
+    "category": "edtech-district",
+    "jurisdiction": "US-CA",
+    "url": "https://springfield.edu/",
+    "contact": "procurement@springfield.edu",
+    "id": "https://springfield.edu/#org"
+  },
+
+  "decision_maker": {
+    "role": "Director of Educational Technology",
+    "name": "Dr. Jane Doe",
+    "department": "Office of Technology",
+    "authority": "Board Resolution 2026-04"
+  },
+
+  "decision": {
+    "status": "approved-with-conditions",
+    "effective_from": "2026-09-01",
+    "effective_until": "2027-08-31",
+    "scope": "K-12 classroom use during regular school hours. Not approved for assessment or grading workflows."
+  },
+
+  "subject": {
+    "vendor_name": "AcmeTutor Inc.",
+    "product_name": "AcmeTutor 3.0",
+    "vendor_id": "https://acmetutor.example/.well-known/aeo.json",
+    "documents_reviewed": [
+      {
+        "type": "tutor-card",
+        "url": "https://acmetutor.example/.well-known/tutor-card.json",
+        "fetched_at": "2026-05-10T14:00:00Z",
+        "content_hash": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "version": "3.0.2"
+      },
+      {
+        "type": "student-ai-disclosure",
+        "url": "https://acmetutor.example/.well-known/student-ai-disclosure.json",
+        "fetched_at": "2026-05-10T14:00:00Z",
+        "content_hash": "sha256:fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210"
+      },
+      {
+        "type": "aeo",
+        "url": "https://acmetutor.example/.well-known/aeo.json",
+        "fetched_at": "2026-05-10T14:00:00Z",
+        "content_hash": "sha256:1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff"
+      }
+    ]
+  },
+
+  "criteria": {
+    "policy_uris": [
+      "https://springfield.edu/.well-known/aup.json",
+      "https://springfield.edu/policies/ai-procurement-2026.pdf"
+    ],
+    "rubric": [
+      {
+        "id": "ferpa-compliance",
+        "description": "Vendor processes student records in a FERPA-compliant manner.",
+        "weight": 1.0,
+        "result": "pass"
+      },
+      {
+        "id": "coppa-compliance",
+        "description": "Vendor obtains verifiable parental consent for users under 13.",
+        "weight": 1.0,
+        "result": "pass"
+      },
+      {
+        "id": "no-training-on-student-data",
+        "description": "Vendor does not use student-provided content for model training.",
+        "weight": 1.0,
+        "result": "pass-with-condition",
+        "notes": "Student Disclosure asserts no-training; district requires contractual confirmation."
+      },
+      {
+        "id": "age-appropriate-content",
+        "description": "Vendor filters out content inappropriate for the declared age range.",
+        "weight": 0.8,
+        "result": "pass"
+      },
+      {
+        "id": "bias-audit-completed",
+        "description": "Vendor has completed a third-party bias audit within the last 18 months.",
+        "weight": 0.8,
+        "result": "partial",
+        "notes": "Bias audit completed 2025-03; due for refresh by 2026-09 per Tutor Card."
+      },
+      {
+        "id": "mandated-reporter-escalation",
+        "description": "Vendor has a documented escalation path for self-harm or abuse disclosures.",
+        "weight": 1.0,
+        "result": "pass"
+      }
+    ]
+  },
+
+  "conditions": [
+    {
+      "id": "no-training-restriction",
+      "description": "Vendor SHALL NOT use Springfield USD student-provided content for model training, fine-tuning, or evaluation. Inference logs SHALL be deleted within 30 days.",
+      "enforcement": "contractual",
+      "violation_response": "Contract termination and breach notification to families within 60 days.",
+      "verification_uri": "https://springfield.edu/procurement/SPRINGFIELD-DEC-2026-001/no-training-attestation"
+    },
+    {
+      "id": "bias-audit-refresh",
+      "description": "Vendor SHALL deliver a refreshed third-party bias audit no later than 2026-12-01. Continued approval is contingent on this delivery.",
+      "enforcement": "audit",
+      "violation_response": "Suspension of approval pending refreshed audit.",
+      "verification_uri": "https://springfield.edu/procurement/SPRINGFIELD-DEC-2026-001/bias-audit-tracker"
+    },
+    {
+      "id": "no-assessment-use",
+      "description": "Vendor SHALL display a clear notice that AcmeTutor outputs MUST NOT be used for student assessment or grading.",
+      "enforcement": "technical",
+      "violation_response": "Immediate restriction of district account access pending remediation."
+    }
+  ],
+
+  "rationale": "AcmeTutor 3.0 meets all hard requirements for FERPA, COPPA, and age-appropriate content filtering. The vendor's Student AI Disclosure already commits to no-training-on-student-data; the district requires contractual reaffirmation of this commitment. The bias audit is current but approaching its refresh window. Approval is granted for K-12 classroom use only, with explicit exclusion of assessment and grading workflows, contingent on the three conditions listed.",
+
+  "history": [
+    { "event": "review_started", "at": "2026-04-15T10:00:00Z", "actor": "EdTech Procurement Committee" },
+    { "event": "documents_collected", "at": "2026-05-10T14:00:00Z", "actor": "Dr. Jane Doe" },
+    { "event": "review_completed", "at": "2026-05-12T16:00:00Z", "actor": "EdTech Procurement Committee" },
+    { "event": "approved-with-conditions", "at": "2026-05-14T19:00:00Z", "actor": "Dr. Jane Doe", "note": "Approval contingent on three documented conditions." }
+  ],
+
+  "appeals": {
+    "deadline": "2026-06-14",
+    "process_uri": "https://springfield.edu/procurement/appeals",
+    "contact": "appeals@springfield.edu"
+  },
+
+  "publication": {
+    "publication_uri": "https://springfield.edu/.well-known/decisions/SPRINGFIELD-DEC-2026-001.json",
+    "is_public": true
+  },
+
+  "signatures": [
+    {
+      "signer": "Dr. Jane Doe, Director of Educational Technology",
+      "signed_at": "2026-05-14T19:00:00Z",
+      "method": "electronic-attestation"
+    }
+  ]
+}

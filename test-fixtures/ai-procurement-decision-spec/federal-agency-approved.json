@@ -1,0 +1,147 @@
+{
+  "decision_card_version": "0.1",
+  "decision_id": "USDA-AVL-2026-0042",
+  "issued_at": "2026-05-14T19:00:00Z",
+
+  "buyer": {
+    "name": "U.S. Department of Agriculture — Office of the CIO",
+    "type": "agency",
+    "category": "federal-civilian",
+    "jurisdiction": "US",
+    "url": "https://www.usda.gov/cio",
+    "id": "https://www.usda.gov/cio/#org"
+  },
+
+  "decision_maker": {
+    "role": "Approved Vendor List (AVL) Review Board",
+    "department": "Office of the Chief Information Officer",
+    "authority": "OMB Memorandum M-24-10 (Advancing Governance, Innovation, and Risk Management for Agency Use of Artificial Intelligence)"
+  },
+
+  "decision": {
+    "status": "approved",
+    "effective_from": "2026-06-01",
+    "effective_until": "2027-05-31",
+    "scope": "Non-rights-impacting and non-safety-impacting AI uses within USDA per OMB M-24-10 § 5. Excludes use in benefit-eligibility determinations."
+  },
+
+  "subject": {
+    "vendor_name": "GreenInsight AI Corp.",
+    "product_name": "CropYield Forecast 4.0",
+    "vendor_id": "https://greeninsight.example/.well-known/aeo.json",
+    "documents_reviewed": [
+      {
+        "type": "aeo",
+        "url": "https://greeninsight.example/.well-known/aeo.json",
+        "fetched_at": "2026-05-01T14:00:00Z",
+        "content_hash": "sha256:00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
+      },
+      {
+        "type": "tool-card",
+        "url": "https://greeninsight.example/.well-known/tool-disclosure.json",
+        "fetched_at": "2026-05-01T14:00:00Z",
+        "content_hash": "sha256:aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899"
+      },
+      {
+        "type": "ai-evidence",
+        "url": "https://greeninsight.example/.well-known/evidence-ledger.json",
+        "fetched_at": "2026-05-01T14:00:00Z",
+        "content_hash": "sha256:8899aabbccddeeff00112233445566778899aabbccddeeff0011223344556677"
+      },
+      {
+        "type": "agent-card",
+        "url": "https://greeninsight.example/.well-known/agent.json",
+        "fetched_at": "2026-05-01T14:00:00Z",
+        "content_hash": "sha256:4455667788990011223344556677889900112233445566778899aabbccddeeff"
+      }
+    ]
+  },
+
+  "criteria": {
+    "policy_uris": [
+      "https://www.whitehouse.gov/wp-content/uploads/2024/03/M-24-10-Advancing-Governance-Innovation-and-Risk-Management-for-Agency-Use-of-Artificial-Intelligence.pdf",
+      "https://www.nist.gov/itl/ai-risk-management-framework",
+      "https://www.usda.gov/cio/policies/avl-rubric-2026.pdf"
+    ],
+    "rubric": [
+      {
+        "id": "rights-impacting-classification",
+        "description": "Use case classified as rights-impacting or safety-impacting per OMB M-24-10 definitions.",
+        "weight": 1.0,
+        "result": "n/a",
+        "notes": "Use case classified as neither rights- nor safety-impacting. Yield forecasting informs USDA agricultural policy research; no individual benefit determinations."
+      },
+      {
+        "id": "nist-rmf-govern",
+        "description": "Vendor demonstrates NIST AI RMF GOVERN function controls (org-level AI governance).",
+        "weight": 1.0,
+        "result": "pass"
+      },
+      {
+        "id": "nist-rmf-map",
+        "description": "Vendor demonstrates NIST AI RMF MAP function controls (context and impact assessment).",
+        "weight": 1.0,
+        "result": "pass"
+      },
+      {
+        "id": "nist-rmf-measure",
+        "description": "Vendor demonstrates NIST AI RMF MEASURE function controls (testing and evaluation).",
+        "weight": 1.0,
+        "result": "pass"
+      },
+      {
+        "id": "nist-rmf-manage",
+        "description": "Vendor demonstrates NIST AI RMF MANAGE function controls (risk treatment).",
+        "weight": 1.0,
+        "result": "pass"
+      },
+      {
+        "id": "data-provenance",
+        "description": "Training data provenance documented; no PII or sensitive personal information used.",
+        "weight": 1.0,
+        "result": "pass"
+      },
+      {
+        "id": "incident-reporting",
+        "description": "Vendor publishes an AI Incident Card registry at well-known URL.",
+        "weight": 0.8,
+        "result": "pass"
+      },
+      {
+        "id": "fedramp-status",
+        "description": "FedRAMP authorization status (if applicable).",
+        "weight": 0.7,
+        "result": "pass",
+        "notes": "Vendor holds FedRAMP Moderate authorization."
+      }
+    ]
+  },
+
+  "rationale": "GreenInsight AI Corp.'s CropYield Forecast 4.0 is added to the USDA Approved Vendor List for non-rights-impacting and non-safety-impacting use through 2027-05-31. The product passes all four NIST AI RMF functions (GOVERN, MAP, MEASURE, MANAGE), holds FedRAMP Moderate authorization, and is appropriately scoped to agricultural research and policy analysis use cases. The vendor's published AI Entity Card, Tool Disclosure, Evidence Ledger, and Agent Card collectively document a procurement-grade AI governance posture consistent with OMB M-24-10 requirements. This decision excludes use in benefit-eligibility determinations or any rights-impacting context.",
+
+  "history": [
+    { "event": "review_started", "at": "2026-04-01T13:00:00Z", "actor": "AVL Review Board" },
+    { "event": "documents_collected", "at": "2026-05-01T14:00:00Z", "actor": "USDA OCIO AI Governance Office" },
+    { "event": "review_completed", "at": "2026-05-13T17:00:00Z", "actor": "AVL Review Board" },
+    { "event": "approved", "at": "2026-05-14T19:00:00Z", "actor": "AVL Review Board" }
+  ],
+
+  "appeals": {
+    "deadline": "2026-08-14",
+    "process_uri": "https://www.usda.gov/cio/avl-appeals"
+  },
+
+  "publication": {
+    "publication_uri": "https://www.usda.gov/cio/avl/USDA-AVL-2026-0042",
+    "is_public": true,
+    "visibility_notes": "Published in compliance with OMB M-24-10 § 5(c) (public inventory of agency AI uses)."
+  },
+
+  "signatures": [
+    {
+      "signer": "USDA AVL Review Board",
+      "signed_at": "2026-05-14T19:00:00Z",
+      "method": "electronic-attestation"
+    }
+  ]
+}

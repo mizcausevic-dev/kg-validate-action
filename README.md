@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: mizcausevic-dev/kg-validate-action@v0.1.0
+      - uses: mizcausevic-dev/kg-validate-action@v0.1.1
         with:
           files: '.well-known/**/*.json'
 ```
@@ -51,6 +51,7 @@ Any JSON file containing one of the following top-level fields is matched and va
 | `aup_version` | Classroom AI AUP | EdTech |
 | `clinical_ai_card_version` | Clinical AI Card | HealthTech (FDA SaMD + HIPAA) |
 | `incident_card_version` | AI Incident Card | Cross-cutting (EU AI Act Article 73) |
+| `decision_card_version` | AI Procurement Decision Card | Cross-cutting (buyer-side) |
 
 Files that don't carry any of these fields are **skipped with a warning**, not failed. Files that do carry one but fail validation against the corresponding schema **fail the action**.
 

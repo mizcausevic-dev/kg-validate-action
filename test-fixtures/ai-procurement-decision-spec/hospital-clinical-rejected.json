@@ -1,0 +1,143 @@
+{
+  "decision_card_version": "0.1",
+  "decision_id": "MERCY-DEC-2026-014",
+  "issued_at": "2026-05-14T19:00:00Z",
+
+  "buyer": {
+    "name": "Mercy Academic Medical Center",
+    "type": "hospital",
+    "category": "academic-medical-center",
+    "jurisdiction": "US-MA",
+    "url": "https://mercy-amc.example/",
+    "contact": "ai-governance@mercy-amc.example",
+    "id": "https://mercy-amc.example/#org"
+  },
+
+  "decision_maker": {
+    "role": "AI Governance Committee",
+    "department": "Office of the Chief Medical Information Officer",
+    "authority": "Medical Staff Bylaws § 14.3 (Clinical AI Tool Adoption)"
+  },
+
+  "decision": {
+    "status": "rejected-with-remediation",
+    "scope": "Proposed deployment in cardiology imaging triage workflow."
+  },
+
+  "subject": {
+    "vendor_name": "CardiacScan AI Ltd.",
+    "product_name": "CardiacScan ECG Triage v2.1",
+    "vendor_id": "https://cardiacscan.example/.well-known/aeo.json",
+    "documents_reviewed": [
+      {
+        "type": "clinical-ai-card",
+        "url": "https://cardiacscan.example/.well-known/clinical-ai/cardiacscan-ecg-v2.json",
+        "fetched_at": "2026-04-30T09:00:00Z",
+        "content_hash": "sha256:abc111222333444555666777888999000aaa111bbb222ccc333ddd444eee555f",
+        "version": "2.1.0"
+      },
+      {
+        "type": "aeo",
+        "url": "https://cardiacscan.example/.well-known/aeo.json",
+        "fetched_at": "2026-04-30T09:00:00Z",
+        "content_hash": "sha256:def000111222333444555666777888999aaa111bbb222ccc333ddd444eee555f"
+      },
+      {
+        "type": "ai-evidence",
+        "url": "https://cardiacscan.example/.well-known/evidence-ledger.json",
+        "fetched_at": "2026-04-30T09:00:00Z",
+        "content_hash": "sha256:777888999aaa111bbb222ccc333ddd444eee555f000111222333444555666777"
+      }
+    ]
+  },
+
+  "criteria": {
+    "policy_uris": [
+      "https://mercy-amc.example/policies/clinical-ai-adoption-2026.pdf",
+      "https://mercy-amc.example/.well-known/clinical-procurement-rubric.json"
+    ],
+    "rubric": [
+      {
+        "id": "fda-clearance",
+        "description": "Product holds appropriate FDA clearance for the proposed clinical use.",
+        "weight": 1.0,
+        "result": "fail",
+        "notes": "Clinical AI Card declares 510(k)-cleared status but the cleared indications-for-use do not include autonomous ECG triage. Vendor proposes off-label deployment."
+      },
+      {
+        "id": "samd-bias-audit",
+        "description": "For SaMD class II+, vendor must publish a recent (≆24 month) third-party bias audit covering the deployment population.",
+        "weight": 1.0,
+        "result": "partial",
+        "notes": "Bias audit exists but predates current model version. Refresh required."
+      },
+      {
+        "id": "phi-data-handling",
+        "description": "PHI handling is HIPAA-compliant with BAA executable on Mercy AMC standard terms.",
+        "weight": 1.0,
+        "result": "pass"
+      },
+      {
+        "id": "validation-cohort-match",
+        "description": "Validation cohort demographics are within 15% of Mercy AMC's patient population.",
+        "weight": 0.9,
+        "result": "fail",
+        "notes": "Validation cohort underrepresents patients aged 65+ by 38% vs Mercy AMC patient mix."
+      },
+      {
+        "id": "ehr-integration",
+        "description": "Product integrates with Epic via FHIR R4 with documented OAuth scopes.",
+        "weight": 0.7,
+        "result": "pass"
+      },
+      {
+        "id": "mandated-reporting",
+        "description": "Vendor has a documented adverse-event reporting path with MedWatch escalation.",
+        "weight": 1.0,
+        "result": "pass"
+      }
+    ]
+  },
+
+  "conditions": [
+    {
+      "id": "scope-fda-clearance",
+      "description": "Re-submission for the same clinical use will be reconsidered only after vendor publishes a Clinical AI Card declaring updated FDA clearance covering autonomous ECG triage as a cleared indication-for-use.",
+      "enforcement": "regulatory"
+    },
+    {
+      "id": "refresh-bias-audit",
+      "description": "Refreshed third-party bias audit covering CardiacScan v2.1 against a demographically-matched cohort (with patients 65+ at ≤ 15% deviation from Mercy AMC patient mix).",
+      "enforcement": "audit"
+    }
+  ],
+
+  "rationale": "Mercy AMC's AI Governance Committee declines to adopt CardiacScan ECG Triage v2.1 for cardiology imaging triage at this time. The current 510(k) clearance covers ECG interpretation as a clinical decision support tool, not autonomous triage. Validation cohort demographics also underrepresent patients aged 65+ relative to Mercy AMC's patient population by approximately 38%, which exceeds our 15% deviation threshold. The vendor is encouraged to re-submit after addressing both gaps. PHI handling, EHR integration, and adverse-event reporting all meet our requirements and are not at issue.",
+
+  "history": [
+    { "event": "review_started", "at": "2026-04-20T09:00:00Z", "actor": "AI Governance Committee" },
+    { "event": "documents_collected", "at": "2026-04-30T09:00:00Z", "actor": "Clinical Procurement Office" },
+    { "event": "review_completed", "at": "2026-05-12T16:00:00Z", "actor": "AI Governance Committee" },
+    { "event": "rejected-with-remediation", "at": "2026-05-14T19:00:00Z", "note": "Two specific remediation items documented; vendor invited to re-submit." }
+  ],
+
+  "appeals": {
+    "deadline": "2026-07-14",
+    "process_uri": "https://mercy-amc.example/policies/ai-procurement-appeals",
+    "contact": "ai-appeals@mercy-amc.example"
+  },
+
+  "publication": {
+    "publication_uri": "https://mercy-amc.example/.well-known/decisions/MERCY-DEC-2026-014.json",
+    "is_public": true,
+    "visibility_notes": "Published in compliance with Mercy AMC's procurement transparency policy. Vendor identity disclosed with the vendor's prior knowledge."
+  },
+
+  "signatures": [
+    {
+      "signer": "AI Governance Committee, Mercy Academic Medical Center",
+      "signed_at": "2026-05-14T19:00:00Z",
+      "method": "electronic-attestation"
+    }
+  ]
+}

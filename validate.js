@@ -38,6 +38,7 @@ const SPECS = [
   { key: 'classroom-aup',      versionField: 'aup_version',                  schemaFile: 'aup.schema.json',                  displayName: 'Classroom AI AUP' },
   { key: 'clinical-ai',        versionField: 'clinical_ai_card_version',     schemaFile: 'clinical-ai-card.schema.json',     displayName: 'Clinical AI Card' },
   { key: 'ai-incident',        versionField: 'incident_card_version',        schemaFile: 'incident-card.schema.json',        displayName: 'AI Incident Card' },
+  { key: 'decision-card',      versionField: 'decision_card_version',        schemaFile: 'decision-card.schema.json',        displayName: 'AI Procurement Decision Card' },
 ];
 
 function detectSpec(doc) {
