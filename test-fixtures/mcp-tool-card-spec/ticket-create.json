@@ -1,0 +1,54 @@
+{
+  "tool_card_version": "0.1",
+  "tool": {
+    "server_id": "kg-support-mcp",
+    "name": "ticket-create",
+    "version": "2.0.1",
+    "mcp_server_uri": "https://support.kineticgain.com/mcp",
+    "description": "Creates a new support ticket on behalf of a customer. Writes to the support backend and may trigger a paging alert if SEV-1 or SEV-2."
+  },
+  "schema": {
+    "input_schema_inline": {
+      "type": "object",
+      "required": ["customer_id", "subject", "body", "severity"],
+      "additionalProperties": false,
+      "properties": {
+        "customer_id": { "type": "string", "pattern": "^cus_[A-Za-z0-9]+$" },
+        "subject": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "body": { "type": "string", "minLength": 1, "maxLength": 10000 },
+        "severity": { "type": "string", "enum": ["SEV-1", "SEV-2", "SEV-3", "SEV-4"] },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "output_schema_uri": "https://support.kineticgain.com/schemas/ticket-receipt.json"
+  },
+  "safety": {
+    "side_effect_class": "mutating",
+    "external_systems": ["pagerduty", "support-db"],
+    "reversible": true,
+    "rate_limited": true,
+    "pii_exposure": "medium",
+    "secrets_exposure": "none",
+    "human_approval_required": false,
+    "refusal_modes": ["cross_tenant_access", "rate_limit_exceeded", "duplicate_within_15min"]
+  },
+  "tested_with": [
+    { "llm": "claude-opus-4-7", "provider": "Anthropic", "test_suite_uri": "https://eval.kineticgain.com/suites/mcp-ticket-v3", "pass_rate": 0.94, "tested_at": "2026-05-09T14:00:00Z", "sample_size": 180 },
+    { "llm": "claude-sonnet-4-6", "provider": "Anthropic", "test_suite_uri": "https://eval.kineticgain.com/suites/mcp-ticket-v3", "pass_rate": 0.91, "tested_at": "2026-05-09T14:30:00Z", "sample_size": 180 }
+  ],
+  "performance": {
+    "p50_latency_ms": 240,
+    "p99_latency_ms": 1800,
+    "measurement_window": "last_7d"
+  },
+  "cost": {
+    "per_call_amount": 0.0021,
+    "per_call_currency": "USD"
+  },
+  "audit": {
+    "log_uri": "https://audit.kineticgain.com/mcp/ticket-create",
+    "retention_days": 730,
+    "signed_by": "kg-support-mcp",
+    "incident_response_uri": "https://kineticgain.com/security/report"
+  }
+}

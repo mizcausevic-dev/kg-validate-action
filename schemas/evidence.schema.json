@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mizcausevic-dev/ai-evidence-format-spec/blob/main/evidence.schema.json",
+  "title": "AI Evidence Object",
+  "description": "Schema for an AI Evidence object — a structured citation that travels with a claim produced by an LLM-based answer engine.",
+  "type": "object",
+  "required": ["evidence_version", "evidence_id", "claim_text", "source", "span", "retrieval", "verification", "synthesis_role"],
+  "additionalProperties": false,
+
+  "properties": {
+    "evidence_version": { "type": "string", "const": "0.1" },
+    "evidence_id": { "type": "string", "minLength": 1 },
+    "claim_text": { "type": "string", "minLength": 1 },
+    "source": { "$ref": "#/$defs/Source" },
+    "span": { "$ref": "#/$defs/Span" },
+    "retrieval": { "$ref": "#/$defs/Retrieval" },
+    "verification": { "$ref": "#/$defs/Verification" },
+    "synthesis_role": { "type": "string", "enum": ["supporting", "contradicting", "partial", "background"] },
+    "notes": { "type": "string" }
+  },
+
+  "$defs": {
+    "Source": {
+      "type": "object",
+      "required": ["uri", "type", "fetched_at"],
+      "additionalProperties": false,
+      "properties": {
+        "uri": { "type": "string", "format": "uri" },
+        "type": { "type": "string", "enum": ["document", "webpage", "api_response", "knowledge_graph", "aeo_declaration", "dataset", "database_row"] },
+        "title": { "type": "string" },
+        "publisher": { "type": "string" },
+        "published_at": { "type": "string", "format": "date-time" },
+        "fetched_at": { "type": "string", "format": "date-time" }
+      }
+    },
+
+    "Span": {
+      "type": "object",
+      "required": ["selector_type"],
+      "additionalProperties": false,
+      "properties": {
+        "selector_type": { "type": "string", "enum": ["byte_range", "line_range", "xpath", "css", "text_quote", "paragraph_index", "none"] },
+        "selector_value": { "type": "string" },
+        "exact_text": { "type": "string" },
+        "surrounding_context": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "selector_type": { "not": { "const": "none" } } } },
+          "then": { "required": ["selector_value"] }
+        }
+      ]
+    },
+
+    "Retrieval": {
+      "type": "object",
+      "required": ["method"],
+      "additionalProperties": false,
+      "properties": {
+        "method": { "type": "string", "enum": ["vector", "keyword", "graph", "hybrid", "direct_fetch", "model_recall"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rank": { "type": "integer", "minimum": 1 },
+        "freshness_age_seconds": { "type": "integer", "minimum": 0 },
+        "retriever_id": { "type": "string" }
+      }
+    },
+
+    "Verification": {
+      "type": "object",
+      "required": ["content_hash"],
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "signature": { "type": "string" },
+        "signing_key_uri": { "type": "string", "format": "uri" },
+        "signed_by": { "type": "string" }
+      }
+    }
+  }
+}

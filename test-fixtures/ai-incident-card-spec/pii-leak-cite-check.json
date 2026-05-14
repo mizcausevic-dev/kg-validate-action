@@ -1,0 +1,85 @@
+{
+  "incident_card_version": "0.1",
+  "incident": {
+    "id": "INC-2026-05-09-kineticgain-003",
+    "title": "Cite-check tool surfaced PII from cached training-data snippets",
+    "severity": "high",
+    "categories": ["pii_leak"],
+    "discovered_at": "2026-05-09T08:15:00Z",
+    "occurred_at": "2026-05-08T20:00:00Z",
+    "disclosed_at": "2026-05-10T12:00:00Z",
+    "resolved_at": "2026-05-11T09:30:00Z",
+    "status": "resolved"
+  },
+  "affected": {
+    "vendor": "Kinetic Gain",
+    "products": ["RAG Sentinel cite-check pipeline"],
+    "versions": ["1.2.3"],
+    "tool_card_uris": [
+      "https://rag.kineticgain.com/.well-known/mcp-tools/cite-check.json"
+    ],
+    "affected_user_count": { "kind": "exact", "count": 7 },
+    "affected_populations": ["enterprise-tenants-eu"]
+  },
+  "summary": "Seven enterprise tenants invoking the cite-check tool received cached citation snippets that contained third-party PII (names, email addresses, and one street address) from an indexed Common Crawl dataset. The PII was present in source pages with robots.txt directives that should have excluded them from the cache; a regex normalization step had unintentionally removed those directives during ingestion. The leak was caught by a routine PII scan over the cache, not by a tenant report.",
+  "root_cause": {
+    "category": "training_data",
+    "description": "An over-permissive regex in the cache-ingestion pipeline normalized 'Disallow: /' to '' when adjacent to whitespace anomalies, effectively allowing pages tagged for exclusion into the citation cache. 1.4% of cached snippets contained excluded-page content; of those, 0.02% contained PII."
+  },
+  "harm": {
+    "severity_justification": "PII leak under GDPR-protected jurisdiction. High rather than critical because exposure was time-bounded (the affected cache shard lived for 13 hours), no special-category data (health, biometric, etc.) was disclosed, and downstream surfaces of the seven tenants did not propagate the leaked content to end-users.",
+    "manifested": true,
+    "narrative": "Seven tenant accounts received tool responses containing 23 unique PII fragments across 11 citation snippets. All seven tenants have been notified directly; cache was purged within 4 hours of discovery; full re-ingestion with corrected pipeline completed 17 hours later."
+  },
+  "mitigation": {
+    "actions_taken": [
+      "Patched the cache-ingestion regex; added 84 test cases covering edge-case whitespace patterns in robots.txt parsing.",
+      "Purged the affected cache shard within 4 hours of discovery.",
+      "Re-ingested all sources with the corrected pipeline (17h total).",
+      "Notified the 7 affected tenants via account-channel and offered SOC-2-grade incident packet under NDA.",
+      "Submitted Article 33 breach notification to the lead supervisory authority (Irish DPC) within the 72-hour GDPR window."
+    ],
+    "permanent_fix": true,
+    "rollout_status": "deployed",
+    "workaround_for_users": "No tenant action required. Affected cache is purged; cite-check tool is operating normally."
+  },
+  "evidence": {
+    "evidence_uris": [
+      "https://rag.kineticgain.com/.well-known/evidence/INC-2026-05-09-kineticgain-003-ev1.json",
+      "https://rag.kineticgain.com/.well-known/evidence/INC-2026-05-09-kineticgain-003-ev2.json"
+    ],
+    "internal_postmortem_uri": "https://rag.kineticgain.com/security/postmortems/INC-2026-05-09-kineticgain-003.md"
+  },
+  "references": [
+    {
+      "type": "regulatory_filing",
+      "title": "Article 33 breach notification — Irish Data Protection Commission",
+      "uri": "https://rag.kineticgain.com/regulatory/2026-05-10-art33-dpc-ireland.pdf",
+      "published_at": "2026-05-10T11:45:00Z"
+    },
+    {
+      "type": "blog_post",
+      "title": "Postmortem: A whitespace bug in robots.txt parsing surfaced PII through our cite-check cache",
+      "uri": "https://rag.kineticgain.com/blog/postmortem-pii-cache-leak",
+      "published_at": "2026-05-12T15:00:00Z"
+    }
+  ],
+  "regulatory": {
+    "reported_to": ["gdpr"],
+    "reporting_deadline_met": true,
+    "regulatory_filing_uris": [
+      "https://rag.kineticgain.com/regulatory/2026-05-10-art33-dpc-ireland.pdf"
+    ]
+  },
+  "published_by": {
+    "name": "Kinetic Gain — Trust & Safety",
+    "role": "vendor",
+    "contact_uri": "mailto:trust-safety@kineticgain.com"
+  },
+  "published_at": "2026-05-10T12:00:00Z",
+  "last_updated_at": "2026-05-12T15:30:00Z",
+  "revision": {
+    "number": 2,
+    "change_summary": "Status changed to resolved; appended postmortem blog reference."
+  }
+}

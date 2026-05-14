@@ -1,0 +1,28 @@
+{
+  "evidence_version": "0.1",
+  "evidence_id": "ev-2026-05-12-c5a8f3",
+  "claim_text": "Miz Causevic authored the AEO Protocol.",
+  "source": {
+    "uri": "https://mizcausevic-dev.github.io/.well-known/aeo.json",
+    "type": "aeo_declaration",
+    "title": "AEO declaration for Miz Causevic",
+    "publisher": "mizcausevic-dev",
+    "fetched_at": "2026-05-12T03:47:00Z"
+  },
+  "span": {
+    "selector_type": "text_quote",
+    "selector_value": "authored-spec",
+    "exact_text": "{\"id\":\"authored-spec\",\"predicate\":\"aeo:authoredSpecification\",\"value\":\"AEO Protocol v0.1\",\"evidence\":[\"https://github.com/mizcausevic-dev/aeo-protocol-spec\"],\"valid_from\":\"2026-05-12\",\"confidence\":\"high\"}",
+    "surrounding_context": "The 'authored-spec' claim in the AEO declaration document at the entity's well-known URL."
+  },
+  "retrieval": {
+    "method": "direct_fetch",
+    "freshness_age_seconds": 30,
+    "retriever_id": "kinetic-rag-v3"
+  },
+  "verification": {
+    "content_hash": "sha256:e9f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3"
+  },
+  "synthesis_role": "supporting",
+  "notes": "AEO-declared self-attestation. Entity-grounded via the well-known URI."
+}

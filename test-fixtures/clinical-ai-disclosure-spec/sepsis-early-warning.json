@@ -1,0 +1,135 @@
+{
+  "clinical_ai_card_version": "0.1",
+  "system": {
+    "id": "kineticgain-sepsis-ews",
+    "name": "Kinetic Gain Sepsis Early Warning System",
+    "version": "2.3.1",
+    "provider": "Kinetic Gain Health",
+    "homepage": "https://health.kineticgain.com/sepsis-ews",
+    "description": "Continuous-monitoring AI system surfacing high-risk-of-sepsis patients to clinicians. Designed to operate alongside (not replace) the bedside team. SaMD class II under 21st Century Cures Act CDS exclusion criteria; clinician override required on every recommendation."
+  },
+  "clinical_context": {
+    "indication": "Early detection of adult inpatient sepsis using vital signs, lab values, and nursing documentation in real time. Surfaces a risk score 6-12 hours before traditional EWS triggers.",
+    "care_settings": ["inpatient", "icu"],
+    "patient_population": {
+      "age_range_min": 18,
+      "age_range_max": 89,
+      "exclusions": [
+        "pediatrics-under-18",
+        "obstetric-patients",
+        "burn-icu-patients",
+        "comfort-care-only"
+      ]
+    },
+    "intended_use": "Clinical decision support for adult inpatient providers to identify patients at elevated risk of sepsis onset. Output is a risk score and supporting feature attribution; the system does not initiate treatment.",
+    "off_label_uses_prohibited": true
+  },
+  "regulatory": {
+    "fda_status": "510k_cleared",
+    "fda_clearance_number": "K233456",
+    "fda_clearance_uri": "https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K233456",
+    "iso_certifications": ["ISO 13485", "IEC 62304", "ISO 14971"],
+    "is_medical_device": true,
+    "is_clinical_decision_support": true,
+    "is_software_as_medical_device": true,
+    "samd_class": "II",
+    "samd_classification_rationale": "Healthcare situation: serious (sepsis). Healthcare decision: drive clinical management (alert clinician to investigate). Per IMDRF framework: Class II.",
+    "regional_authorizations": [
+      { "region": "EU", "status": "CE-marked-MDR", "identifier": "CE-MDR-2024-0042" }
+    ]
+  },
+  "clinical_role": {
+    "decision_support_level": "advisory",
+    "clinician_override_required": true,
+    "patient_facing_only": false,
+    "transparency_to_patient_required": true,
+    "pre_authorization_use": false
+  },
+  "evidence": {
+    "validation_studies": [
+      {
+        "title": "Multi-site prospective validation of Kinetic Gain Sepsis EWS across 4 US academic centers",
+        "uri": "https://health.kineticgain.com/studies/sepsis-ews-multisite-2025.pdf",
+        "population_size": 48217,
+        "primary_outcome": "Detection of sepsis onset (Sepsis-3 criteria) at least 6 hours before standard MEWS trigger",
+        "results_summary": "Achieved sensitivity 0.84, specificity 0.78, AUC 0.89. Sensitivity remained >0.80 across age, sex, and self-reported race subgroups. Median lead time vs MEWS: 8.7 hours.",
+        "peer_reviewed": true,
+        "published_at": "2025-09-04T00:00:00Z"
+      },
+      {
+        "title": "Real-world post-market surveillance after 12 months of deployment",
+        "uri": "https://health.kineticgain.com/studies/sepsis-ews-pms-2026.pdf",
+        "population_size": 312804,
+        "primary_outcome": "False-positive rate per shift and alert-acknowledgment timing",
+        "results_summary": "Real-world FPR was 0.21 (vs 0.22 in validation); median acknowledgment time 4.2 minutes; no critical incidents reported during the window.",
+        "peer_reviewed": false,
+        "published_at": "2026-03-20T00:00:00Z"
+      }
+    ],
+    "training_data_sources": [
+      "MIMIC-IV (Beth Israel Deaconess Medical Center)",
+      "eICU Collaborative Research Database",
+      "Internal multi-site dataset N=287k encounters across 9 US health systems (2018-2023)"
+    ],
+    "bias_audit_uri": "https://health.kineticgain.com/audits/sepsis-ews-bias-2025-Q4.pdf",
+    "performance_metrics": {
+      "measurement_population": "Adult inpatient encounters at 4 US academic centers (validation cohort, 2024-2025)",
+      "sensitivity": 0.84,
+      "specificity": 0.78,
+      "auc": 0.89,
+      "false_positive_rate": 0.22,
+      "false_negative_rate": 0.16,
+      "ppv": 0.42,
+      "npv": 0.96
+    }
+  },
+  "patient_data": {
+    "phi_processed": true,
+    "hipaa_compliant": true,
+    "baa_required": true,
+    "de_identification_method": "not-applicable",
+    "retention_days": 365,
+    "patient_consent_required": false,
+    "third_party_data_sharing": false,
+    "model_training_consent_required": false
+  },
+  "safety": {
+    "human_in_loop_required_for": [
+      "pediatric-patient-mistakenly-routed",
+      "obstetric-patient",
+      "comfort-care-only-patient",
+      "system-confidence-below-threshold"
+    ],
+    "escalation_protocols": [
+      "Critical alerts route to charge RN AND attending; non-acknowledgment within 15 min escalates to rapid response team.",
+      "All alert dispositions are logged with clinician identity, timestamp, and free-text rationale."
+    ],
+    "mandatory_reporting_categories": [
+      "adverse-drug-event-related-to-acted-on-alert",
+      "patient-deterioration-during-system-downtime"
+    ],
+    "blocks_diagnostic_claims": false,
+    "treatment_recommendation_disclaimer_required": false
+  },
+  "ehr_integration": {
+    "fhir_version": "R4",
+    "supports_smart_on_fhir": true,
+    "supports_cds_hooks": true,
+    "ehr_vendors_supported": ["Epic", "Cerner", "MEDITECH"]
+  },
+  "agent_card_uri": "https://health.kineticgain.com/.well-known/agents/sepsis-ews.json",
+  "evaluations": [
+    {
+      "suite": "STAT-AI Clinical Benchmark v2",
+      "result_uri": "https://stat-ai.example.org/runs/kg-sepsis-ews-2026q1",
+      "metrics": { "auc": 0.87, "calibration_intercept": -0.02, "calibration_slope": 0.96 },
+      "ran_at": "2026-02-14T00:00:00Z",
+      "accreditation_body": "Coalition for Health AI (CHAI)"
+    }
+  ],
+  "audit": {
+    "audit_log_uri": "https://health.kineticgain.com/customer-portal/audit-logs",
+    "incident_response_uri": "https://health.kineticgain.com/security/incident-response",
+    "incident_card_index_uri": "https://health.kineticgain.com/.well-known/ai-incidents.json"
+  }
+}

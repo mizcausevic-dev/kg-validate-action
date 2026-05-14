@@ -1,0 +1,26 @@
+{
+  "disclosure_version": "0.1",
+  "disclosure_id": "d-2026-05-12-a1b2c3d4",
+  "created_at": "2026-05-12T14:30:00Z",
+  "student": {
+    "id": "stu-7f3a91",
+    "grade_or_year": "10",
+    "institution_id": "lincoln-high-district-42"
+  },
+  "assignment": {
+    "id": "assn-2026-eng-essay-3",
+    "title": "Persuasive Essay: The Case for Civic Engagement",
+    "course_id": "course-eng-10-spring-2026",
+    "lms": "canvas",
+    "due_at": "2026-05-14T23:59:00Z"
+  },
+  "ai_used": false,
+  "artifact_hash": "sha256:7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730",
+  "artifact_uri": "https://lincoln-high.instructure.com/files/889912/download",
+  "aup_uri": "https://lincoln-high-district-42.edu/.well-known/ai-aup.json",
+  "policy_compliant": {
+    "declared": true
+  },
+  "signed_by_student": true,
+  "student_signature_at": "2026-05-12T14:30:00Z"
+}

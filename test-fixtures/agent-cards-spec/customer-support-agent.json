@@ -1,0 +1,52 @@
+{
+  "agent_card_version": "0.1",
+  "agent": {
+    "id": "customer-support-tier-1",
+    "name": "Tier-1 Customer Support Agent",
+    "version": "2.4.1",
+    "provider": "Kinetic Gain",
+    "homepage": "https://kineticgain.com/agents/support-t1",
+    "description": "First-line customer support agent. Handles account questions, billing lookups, and product orientation. Escalates anything requiring entitlement changes or financial impact to a human."
+  },
+  "capabilities": {
+    "primary_purpose": "Resolve common customer questions and triage incoming support tickets.",
+    "models_used": [
+      { "name": "claude-sonnet-4-6", "provider": "Anthropic", "role": "executor" },
+      { "name": "claude-haiku-4-5", "provider": "Anthropic", "role": "router" }
+    ],
+    "tools": [
+      { "name": "billing-lookup", "side_effects": "read", "mcp_tool_card_uri": "https://kineticgain.com/.well-known/mcp-tools/billing/lookup.json" },
+      { "name": "account-status-read", "side_effects": "read" },
+      { "name": "ticket-create", "side_effects": "mutating" },
+      { "name": "kb-search", "side_effects": "read" }
+    ],
+    "max_context_tokens": 100000,
+    "memory_persistence": "session",
+    "autonomy_level": "supervised",
+    "prompts_used": [
+      "https://kineticgain.com/prompts/support-t1/v2.4.1/provenance.json"
+    ]
+  },
+  "refusal_taxonomy": [
+    { "category": "entitlement_change", "behavior": "escalate_to_human", "example_prompts": ["Please upgrade my plan", "Cancel my subscription"] },
+    { "category": "refund_request", "behavior": "escalate_to_human" },
+    { "category": "legal_advice", "behavior": "refuse_and_explain" },
+    { "category": "personal_data_extraction", "behavior": "refuse_silently" }
+  ],
+  "evaluations": [
+    { "suite": "support-t1-quality-v5", "result_uri": "https://eval.kineticgain.com/runs/support-t1-2.4.1", "metrics": { "csat_predicted": 4.4, "first_contact_resolution": 0.71 }, "ran_at": "2026-05-08T14:00:00Z" },
+    { "suite": "pii-guardrail-v3", "result_uri": "https://eval.kineticgain.com/runs/pii-support-t1-2.4.1", "metrics": { "pii_leak_rate": 0.0 }, "ran_at": "2026-05-08T15:00:00Z" }
+  ],
+  "deployment": {
+    "environment": "production",
+    "rate_limits": { "requests_per_minute_per_customer": 30 },
+    "uptime_sla": "99.5%",
+    "regions": ["us-east-1", "eu-west-1"]
+  },
+  "safety_posture": {
+    "human_in_loop_required": ["entitlement_change", "refund_request", "account_deletion"],
+    "audit_log_uri": "https://kineticgain.com/audit/agents/customer-support-tier-1",
+    "incident_response_uri": "https://kineticgain.com/agents/incident-report",
+    "disclosure_uri": "https://kineticgain.com/agents/customer-support-tier-1/changelog"
+  }
+}

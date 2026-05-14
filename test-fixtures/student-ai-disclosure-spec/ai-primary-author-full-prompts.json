@@ -1,0 +1,65 @@
+{
+  "disclosure_version": "0.1",
+  "disclosure_id": "d-2026-05-12-c9a3e7f1",
+  "created_at": "2026-05-12T20:05:00Z",
+  "student": {
+    "id": "stu-stateu-1834571",
+    "display_name": "Alex Chen",
+    "grade_or_year": "undergrad",
+    "institution_id": "state-u"
+  },
+  "assignment": {
+    "id": "assn-cs180-final-project",
+    "title": "Final Project: Build a Web Scraper",
+    "course_id": "cs180-spring-2026",
+    "lms": "moodle",
+    "due_at": "2026-05-15T23:59:00Z"
+  },
+  "ai_used": true,
+  "tools_used": [
+    {
+      "name": "Claude.ai",
+      "provider": "Anthropic",
+      "version": "claude-opus-4-7",
+      "agent_card_uri": "https://anthropic.com/.well-known/agents/claude-opus-4-7.json"
+    },
+    {
+      "name": "GitHub Copilot",
+      "provider": "GitHub",
+      "version": "1.215.0"
+    }
+  ],
+  "roles": ["draft", "code_completion", "code_review"],
+  "assistance_extent": "primary_author",
+  "assistance_pct": 75,
+  "prompt_evidence_mode": "full",
+  "prompts": [
+    {
+      "id": "p1",
+      "text": "Write a Python web scraper that fetches the top 10 article titles from Hacker News and stores them in a SQLite database. Use only the stdlib plus requests and sqlite3.",
+      "at": "2026-05-12T18:10:00Z",
+      "tool_index": 0
+    },
+    {
+      "id": "p2",
+      "text": "Review this scraper for robustness issues. What happens if the HN HTML changes? How should I handle rate limiting?",
+      "at": "2026-05-12T18:55:00Z",
+      "tool_index": 0
+    },
+    {
+      "id": "p3",
+      "text": "Add a CLI argument for the destination database path. Use argparse.",
+      "at": "2026-05-12T19:32:00Z",
+      "tool_index": 0
+    }
+  ],
+  "artifact_hash": "sha256:f0e9d8c7b6a59487635241302010ffeedccbbaa9988776655443322110a1b2c3",
+  "artifact_uri": "https://github.com/alexchen/cs180-final/blob/main/scraper.py",
+  "aup_uri": "https://state-u.edu/.well-known/ai-aup.json",
+  "policy_compliant": {
+    "declared": true,
+    "reason": "CS180 syllabus explicitly permits AI-assisted code generation provided full prompt history is disclosed."
+  },
+  "signed_by_student": true,
+  "student_signature_at": "2026-05-12T20:05:00Z"
+}

@@ -1,0 +1,52 @@
+{
+  "aup_version": "0.1",
+  "policy_id": "lincoln-bio-11-midterm-2026-no-ai",
+  "policy_name": "Bio 11 Spring 2026 Midterm Exam — No AI Permitted",
+  "version": "1.0.0",
+  "effective_at": "2026-03-10T00:00:00Z",
+  "expires_at": "2026-03-12T23:59:59Z",
+  "scope": {
+    "type": "assignment",
+    "institution_id": "lincoln-high-district-42",
+    "grade_bands": ["9-12"],
+    "assignment_ids": ["bio-11-midterm-2026"],
+    "parent_policy_uri": "https://lincoln-high-district-42.edu/.well-known/ai-aup.json"
+  },
+  "permitted_use": {
+    "permitted_roles": [],
+    "assistance_extent_max": "none"
+  },
+  "prohibited_use": {
+    "prohibited_uses": [
+      "All AI-assisted work on this assessment.",
+      "Use of any tutoring tool during the proctored window.",
+      "Use of translation tools (request human-translator accommodation via Disability Services if needed)."
+    ]
+  },
+  "disclosure_requirements": {
+    "required_when": "always",
+    "signature_required": true,
+    "teacher_acknowledgment_required": true,
+    "artifact_hash_required": true
+  },
+  "supervision": {
+    "level": "proctored",
+    "human_in_loop_categories": ["mental_health_disclosure"]
+  },
+  "vendor_requirements": {},
+  "parent_notification": {
+    "notification_level": "none",
+    "parent_consent_required": false
+  },
+  "enforcement": {
+    "violation_response": [
+      "Any AI use during the proctored window: automatic zero and Academic Integrity Office referral."
+    ]
+  },
+  "published_by": {
+    "name": "Mr. M. Rivera, Bio 11 Instructor",
+    "role": "course-instructor",
+    "contact_uri": "mailto:m.rivera@lincoln-high-district-42.edu"
+  },
+  "published_at": "2026-03-01T12:00:00Z"
+}

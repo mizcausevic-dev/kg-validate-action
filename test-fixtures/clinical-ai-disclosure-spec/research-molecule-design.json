@@ -1,0 +1,83 @@
+{
+  "clinical_ai_card_version": "0.1",
+  "system": {
+    "id": "kineticgain-molecule-design",
+    "name": "Kinetic Gain Molecule Design Assistant",
+    "version": "0.9.0-beta",
+    "provider": "Kinetic Gain Research",
+    "homepage": "https://research.kineticgain.com/molecule-design",
+    "description": "Research-use-only generative model for small-molecule scaffold ideation. Designed for academic medicinal chemistry teams and pre-IND discovery work. Does not process patient data. Not for clinical use; not a medical device."
+  },
+  "clinical_context": {
+    "indication": "In silico generation and prioritization of small-molecule candidates targeting specific protein receptors. Used by computational chemists during the hit-to-lead phase of drug discovery.",
+    "care_settings": ["research"],
+    "patient_population": {
+      "age_range_min": 0,
+      "age_range_max": 130,
+      "exclusions": [
+        "no-direct-patient-use-permitted",
+        "not-for-clinical-decision-making"
+      ]
+    },
+    "intended_use": "Research-use-only generative chemistry assistant. Output is a set of candidate molecular structures and prioritization scores for downstream wet-lab validation. The system is not authorized for any clinical or treatment-related use.",
+    "off_label_uses_prohibited": true
+  },
+  "regulatory": {
+    "fda_status": "research_use_only",
+    "is_medical_device": false,
+    "is_clinical_decision_support": false,
+    "is_software_as_medical_device": false,
+    "notes": "Research-use-only labeling enforced at deployment time; the system refuses prompts that imply patient-treatment context. IRB-equivalent review is required for any institution intending to use outputs in human-subjects research."
+  },
+  "clinical_role": {
+    "decision_support_level": "informational",
+    "clinician_override_required": false,
+    "patient_facing_only": false,
+    "transparency_to_patient_required": false,
+    "pre_authorization_use": false
+  },
+  "evidence": {
+    "validation_studies": [
+      {
+        "title": "Benchmark of Kinetic Gain Molecule Design Assistant on the MOSES and GuacaMol generative-chemistry benchmarks",
+        "uri": "https://research.kineticgain.com/studies/moses-guacamol-bench-2026.pdf",
+        "population_size": 100000,
+        "primary_outcome": "Synthetic accessibility (SA score), drug-likeness (QED), novelty vs ChEMBL, diversity (internal-diversity) across 100k generated molecules",
+        "results_summary": "SA score median 3.1 (vs 3.4 for ChemFormer baseline); QED median 0.62; novelty 0.81; internal-diversity 0.72. Top-1% candidates were synthesizable in-house in 6 of 10 spot-checks.",
+        "peer_reviewed": false,
+        "published_at": "2026-01-22T00:00:00Z"
+      }
+    ],
+    "training_data_sources": [
+      "ChEMBL release 33 (public)",
+      "ZINC20 lead-like subset (public)",
+      "Internal medicinal-chemistry literature corpus (licensed)"
+    ],
+    "performance_metrics": {
+      "measurement_population": "Generated molecule pool across 100k samples on three target proteins (EGFR, BRAF, COX-2)",
+      "accuracy": 0.62,
+      "precision": 0.58,
+      "recall": 0.41
+    }
+  },
+  "patient_data": {
+    "phi_processed": false,
+    "retention_days": 0,
+    "patient_consent_required": false,
+    "third_party_data_sharing": false
+  },
+  "safety": {
+    "human_in_loop_required_for": [
+      "queries-implying-clinical-use",
+      "queries-targeting-controlled-substances"
+    ],
+    "mandatory_reporting_categories": [],
+    "blocks_diagnostic_claims": true,
+    "treatment_recommendation_disclaimer_required": true
+  },
+  "agent_card_uri": "https://research.kineticgain.com/.well-known/agents/molecule-design.json",
+  "audit": {
+    "audit_log_uri": "https://research.kineticgain.com/audit/molecule-design",
+    "disclosure_uri": "https://research.kineticgain.com/molecule-design/changelog"
+  }
+}

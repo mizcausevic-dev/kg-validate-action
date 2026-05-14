@@ -1,0 +1,44 @@
+{
+  "agent_card_version": "0.1",
+  "agent": {
+    "id": "sre-incident-triage",
+    "name": "SRE Incident Triage Agent",
+    "version": "1.2.0",
+    "provider": "Kinetic Gain",
+    "homepage": "https://kineticgain.com/agents/sre-triage",
+    "description": "On-call companion. Reads incoming alerts, queries observability backends, drafts a timeline narrative and a paged-engineer brief. Read-only across all production systems."
+  },
+  "capabilities": {
+    "primary_purpose": "Reduce time-to-context for an on-call engineer when a new alert pages.",
+    "models_used": [
+      { "name": "claude-opus-4-7", "provider": "Anthropic", "role": "planner" },
+      { "name": "claude-sonnet-4-6", "provider": "Anthropic", "role": "executor" }
+    ],
+    "tools": [
+      { "name": "prometheus-query", "side_effects": "read" },
+      { "name": "loki-search", "side_effects": "read" },
+      { "name": "deploy-history-read", "side_effects": "read" },
+      { "name": "slack-post-summary", "side_effects": "external", "mcp_tool_card_uri": "https://kineticgain.com/.well-known/mcp-tools/slack/post.json" }
+    ],
+    "max_context_tokens": 200000,
+    "memory_persistence": "none",
+    "autonomy_level": "assistive"
+  },
+  "refusal_taxonomy": [
+    { "category": "remediation_action", "behavior": "refuse_and_explain", "example_prompts": ["Roll back the deploy", "Scale the cluster"] },
+    { "category": "post_to_external_channel", "behavior": "escalate_to_human" }
+  ],
+  "evaluations": [
+    { "suite": "incident-context-quality-v2", "result_uri": "https://eval.kineticgain.com/runs/sre-triage-1.2.0", "metrics": { "context_completeness": 0.88, "narrative_quality_human_rated": 4.3 }, "ran_at": "2026-05-09T10:00:00Z" }
+  ],
+  "deployment": {
+    "environment": "production",
+    "uptime_sla": "99.9%",
+    "regions": ["us-east-1"]
+  },
+  "safety_posture": {
+    "human_in_loop_required": ["remediation_action", "post_to_external_channel"],
+    "audit_log_uri": "https://kineticgain.com/audit/agents/sre-incident-triage",
+    "disclosure_uri": "https://kineticgain.com/agents/sre-incident-triage/changelog"
+  }
+}

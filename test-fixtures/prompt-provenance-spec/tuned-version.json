@@ -1,0 +1,49 @@
+{
+  "provenance_version": "0.1",
+  "prompt": {
+    "id": "incident-summary-generator",
+    "name": "Incident Summary Generator",
+    "version": "1.1.0",
+    "hash": "sha256:b4c2f0e3d7e5f9b1a8c6d3e0f2b5a7c9d1e3f5a7b9c1d3e5f7a9b1c3d5e7f9b1",
+    "content_uri": "https://github.com/example-org/llm-prompts/blob/main/prompts/incident-summary-generator/v1.1.0/template.j2",
+    "content_type": "text/jinja2"
+  },
+  "lineage": {
+    "parent": "incident-summary-generator@1.0.0",
+    "derivation": "tune",
+    "change_summary": "Tightened the rubric for synthesizing duration and blast radius; added explicit instruction to omit speculative root cause."
+  },
+  "authorship": {
+    "created_by": "mirzacausevic@example.com",
+    "reviewed_by": ["sre-lead@example.com", "principal-eng@example.com"],
+    "approved_by": "principal-eng@example.com",
+    "created_at": "2026-05-12T02:00:00Z",
+    "approved_at": "2026-05-12T02:45:00Z"
+  },
+  "intent": {
+    "purpose": "Summarize an incident timeline into a 200-word post-mortem opening section, with stricter scope discipline.",
+    "in_scope": ["production incidents", "SEV-1 through SEV-3", "synthesized timeline narrative"],
+    "out_of_scope": ["root-cause analysis", "remediation recommendations", "blame attribution", "speculative cause"],
+    "models_supported": ["claude-opus-4-*", "claude-sonnet-4-*", "gpt-4-*"]
+  },
+  "evaluations": [
+    {
+      "suite": "incident-summary-quality-v3",
+      "result_uri": "https://eval.example.com/runs/2026-05-12-incident-summary-1.1.0",
+      "score": 0.94,
+      "passed": true,
+      "ran_at": "2026-05-12T02:15:00Z"
+    },
+    {
+      "suite": "scope-discipline-v2",
+      "result_uri": "https://eval.example.com/runs/2026-05-12-scope-1.1.0",
+      "score": 0.97,
+      "passed": true,
+      "ran_at": "2026-05-12T02:20:00Z"
+    }
+  ],
+  "approval": {
+    "state": "approved",
+    "policy_uri": "https://policy.example.com/prompts/approval-v2"
+  }
+}

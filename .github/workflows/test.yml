@@ -1,0 +1,56 @@
+name: Self-test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate-bundled-fixtures:
+    name: Validate the 30 bundled example fixtures
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Exercise the action against the test fixtures. All 30 should pass —
+      # this is the regression gate for both the validator script and the
+      # bundled schemas.
+      - name: Run kg-validate on test-fixtures
+        uses: ./
+        with:
+          files: 'test-fixtures/**/*.json'
+
+  negative-test:
+    name: Verify intentionally bad JSON fails the action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write a deliberately invalid fixture
+        run: |
+          mkdir -p /tmp/bad-fixtures
+          cat > /tmp/bad-fixtures/bad-aeo.json <<'EOF'
+          {
+            "aeo_version": "0.1",
+            "entity": "this should be an object not a string"
+          }
+          EOF
+
+      # We expect this step to FAIL. continue-on-error captures the exit code
+      # so the workflow itself stays green and we assert the right behavior.
+      - name: Run kg-validate on the bad file (expect failure)
+        id: bad-run
+        continue-on-error: true
+        uses: ./
+        with:
+          files: '/tmp/bad-fixtures/*.json'
+
+      - name: Assert the bad fixture made the action fail
+        run: |
+          if [ "${{ steps.bad-run.outcome }}" != "failure" ]; then
+            echo "Expected kg-validate to fail on the bad fixture, but it passed."
+            exit 1
+          fi
+          echo "Negative test confirmed: bad fixture correctly failed the action."

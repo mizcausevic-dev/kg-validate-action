@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mizcausevic-dev/agent-cards-spec/blob/main/agent-card.schema.json",
+  "title": "Agent Card",
+  "description": "Schema for an Agent Card document disclosing an AI agent's capabilities, refusal behavior, evaluations, deployment, and safety posture.",
+  "type": "object",
+  "required": ["agent_card_version", "agent", "capabilities", "refusal_taxonomy", "deployment", "safety_posture"],
+  "additionalProperties": false,
+
+  "properties": {
+    "agent_card_version": { "type": "string", "const": "0.1" },
+    "agent": { "$ref": "#/$defs/Agent" },
+    "capabilities": { "$ref": "#/$defs/Capabilities" },
+    "refusal_taxonomy": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/RefusalCategory" }
+    },
+    "evaluations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Evaluation" }
+    },
+    "deployment": { "$ref": "#/$defs/Deployment" },
+    "safety_posture": { "$ref": "#/$defs/SafetyPosture" }
+  },
+
+  "allOf": [
+    {
+      "if": {
+        "properties": { "capabilities": { "properties": { "autonomy_level": { "const": "autonomous" } } } }
+      },
+      "then": {
+        "properties": {
+          "safety_posture": { "required": ["incident_response_uri"] }
+        }
+      }
+    }
+  ],
+
+  "$defs": {
+    "Agent": {
+      "type": "object",
+      "required": ["id", "name", "version", "provider", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$" },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+].+)?$" },
+        "provider": { "type": "string", "minLength": 1 },
+        "homepage": { "type": "string", "format": "uri" },
+        "description": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "Capabilities": {
+      "type": "object",
+      "required": ["primary_purpose", "models_used", "tools", "max_context_tokens", "memory_persistence", "autonomy_level"],
+      "additionalProperties": false,
+      "properties": {
+        "primary_purpose": { "type": "string", "minLength": 1 },
+        "models_used": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/ModelUse" }
+        },
+        "tools": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ToolUse" }
+        },
+        "max_context_tokens": { "type": "integer", "minimum": 1 },
+        "memory_persistence": { "type": "string", "enum": ["none", "session", "persistent"] },
+        "autonomy_level": { "type": "string", "enum": ["assistive", "supervised", "autonomous"] },
+        "prompts_used": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+
+    "ModelUse": {
+      "type": "object",
+      "required": ["name", "role"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "provider": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "enum": ["planner", "executor", "critic", "router", "judge"] }
+      }
+    },
+
+    "ToolUse": {
+      "type": "object",
+      "required": ["name", "side_effects"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "mcp_tool_card_uri": { "type": "string", "format": "uri" },
+        "side_effects": { "type": "string", "enum": ["read", "mutating", "external", "destructive"] }
+      }
+    },
+
+    "RefusalCategory": {
+      "type": "object",
+      "required": ["category", "behavior"],
+      "additionalProperties": false,
+      "properties": {
+        "category": { "type": "string", "minLength": 1 },
+        "behavior": { "type": "string", "enum": ["refuse_silently", "refuse_and_explain", "escalate_to_human", "redirect_to_alternative"] },
+        "example_prompts": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "Evaluation": {
+      "type": "object",
+      "required": ["suite", "result_uri", "ran_at"],
+      "additionalProperties": false,
+      "properties": {
+        "suite": { "type": "string", "minLength": 1 },
+        "result_uri": { "type": "string", "format": "uri" },
+        "metrics": { "type": "object" },
+        "ran_at": { "type": "string", "format": "date-time" }
+      }
+    },
+
+    "Deployment": {
+      "type": "object",
+      "required": ["environment"],
+      "additionalProperties": false,
+      "properties": {
+        "environment": { "type": "string", "enum": ["production", "staging", "sandbox", "experimental"] },
+        "rate_limits": { "type": "object" },
+        "uptime_sla": { "type": "string" },
+        "regions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "SafetyPosture": {
+      "type": "object",
+      "required": ["human_in_loop_required"],
+      "additionalProperties": false,
+      "properties": {
+        "human_in_loop_required": { "type": "array", "items": { "type": "string" } },
+        "audit_log_uri": { "type": "string", "format": "uri" },
+        "incident_response_uri": { "type": "string", "format": "uri" },
+        "disclosure_uri": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}

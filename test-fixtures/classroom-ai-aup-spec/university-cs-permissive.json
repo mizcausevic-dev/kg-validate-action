@@ -1,0 +1,70 @@
+{
+  "aup_version": "0.1",
+  "policy_id": "state-u-cs180-2026-ai-aup",
+  "policy_name": "State University · CS180 Final Project — AI Acceptable Use Policy",
+  "version": "1.0.0",
+  "effective_at": "2026-01-08T00:00:00Z",
+  "expires_at": "2026-05-31T23:59:59Z",
+  "scope": {
+    "type": "course",
+    "institution_id": "state-u",
+    "grade_bands": ["undergrad"],
+    "course_ids": ["cs180-spring-2026"],
+    "parent_policy_uri": "https://state-u.edu/.well-known/ai-aup.json"
+  },
+  "permitted_use": {
+    "permitted_roles": [
+      "brainstorm",
+      "outline",
+      "draft",
+      "edit",
+      "code_completion",
+      "code_review",
+      "research_synthesis",
+      "tutor_dialog",
+      "cite_check"
+    ],
+    "permitted_tool_categories": ["text_chat", "code_assistant", "tutoring", "research_synthesis"],
+    "assistance_extent_max": "primary_author"
+  },
+  "prohibited_use": {
+    "prohibited_uses": [
+      "Submitting AI-generated work without a Student AI Disclosure on the submission.",
+      "Generating answers to in-class proctored exams.",
+      "Bypassing the disclosure requirement by paraphrasing AI output verbatim."
+    ]
+  },
+  "disclosure_requirements": {
+    "required_when": "always",
+    "required_prompt_evidence_mode": "full",
+    "signature_required": true,
+    "teacher_acknowledgment_required": false,
+    "artifact_hash_required": true
+  },
+  "supervision": {
+    "level": "unsupervised"
+  },
+  "vendor_requirements": {
+    "requires_agent_card": true,
+    "required_compliance": ["ferpa"],
+    "prohibits_model_training_on_student_data": true,
+    "retention_days_max": 180
+  },
+  "parent_notification": {
+    "notification_level": "none",
+    "parent_consent_required": false
+  },
+  "enforcement": {
+    "violation_response": [
+      "Missing disclosure on AI-assisted submission: zero on the assignment.",
+      "False disclosure (claimed no AI use when AI was used): referral to Academic Integrity Office."
+    ],
+    "appeals_process_uri": "https://state-u.edu/academic-integrity/appeals"
+  },
+  "published_by": {
+    "name": "Prof. R. Patel, CS180 Instructor",
+    "role": "course-instructor",
+    "contact_uri": "mailto:rpatel@state-u.edu"
+  },
+  "published_at": "2026-01-05T20:00:00Z"
+}

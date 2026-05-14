@@ -1,0 +1,29 @@
+{
+  "evidence_version": "0.1",
+  "evidence_id": "ev-2026-05-12-b2e7d4",
+  "claim_text": "The robots.txt convention is widely interpreted as governing whether an LLM may train on the content of a site.",
+  "source": {
+    "uri": "https://www.rfc-editor.org/rfc/rfc9309",
+    "type": "document",
+    "title": "RFC 9309: Robots Exclusion Protocol",
+    "publisher": "IETF",
+    "published_at": "2022-09-01T00:00:00Z",
+    "fetched_at": "2026-05-12T03:46:00Z"
+  },
+  "span": {
+    "selector_type": "text_quote",
+    "selector_value": "This document specifies and extends the \"Robots Exclusion Protocol\"",
+    "exact_text": "This document specifies and extends the \"Robots Exclusion Protocol\" originally defined by Martijn Koster in 1994 [ROBOTSTXT], with a method that allows service owners to control how content served by their services may be accessed, if at all, by automatic clients known as crawlers.",
+    "surrounding_context": "RFC 9309 Section 1 — Introduction. The RFC scopes robots.txt to crawler access, not training-data permissions."
+  },
+  "retrieval": {
+    "method": "direct_fetch",
+    "freshness_age_seconds": 60,
+    "retriever_id": "kinetic-rag-v3"
+  },
+  "verification": {
+    "content_hash": "sha256:d8e2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2"
+  },
+  "synthesis_role": "contradicting",
+  "notes": "The RFC defines robots.txt as a crawl-control mechanism. Public discourse conflates it with training-data permission, but the spec does not support that interpretation."
+}

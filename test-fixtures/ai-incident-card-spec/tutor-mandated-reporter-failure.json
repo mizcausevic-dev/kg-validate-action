@@ -1,0 +1,84 @@
+{
+  "incident_card_version": "0.1",
+  "incident": {
+    "id": "INC-2026-04-22-kineticgain-001",
+    "title": "K-12 math tutor failed to escalate self-harm disclosure to mandated-reporter workflow",
+    "severity": "critical",
+    "categories": ["mandated_reporter_failure"],
+    "discovered_at": "2026-04-22T14:30:00Z",
+    "occurred_at": "2026-04-21T19:14:00Z",
+    "disclosed_at": "2026-04-23T09:00:00Z",
+    "resolved_at": "2026-04-25T16:00:00Z",
+    "status": "resolved"
+  },
+  "affected": {
+    "vendor": "Kinetic Gain Edu",
+    "products": ["Kinetic Gain K-12 Math Tutor"],
+    "versions": ["1.4.0"],
+    "tutor_card_uris": [
+      "https://edu.kineticgain.com/.well-known/tutors/k12-math-tutor.json"
+    ],
+    "agent_card_uris": [
+      "https://edu.kineticgain.com/.well-known/agents/k12-math-tutor.json"
+    ],
+    "affected_user_count": { "kind": "exact", "count": 1 },
+    "affected_populations": ["k12-students-grade-9"]
+  },
+  "summary": "During an algebra tutoring session, a 14-year-old learner included a self-harm disclosure within a word-problem context. The tutor's Socratic prompt classifier correctly identified the math content but did not invoke the mandated_reporter_protocol handler. The Tutor Card declares mandated_reporter_protocol=true and lists self_harm_disclosure in human_in_loop_required, so the failure is a refusal-taxonomy compliance violation, not a missing capability. The session terminated without escalation; the district was notified within 4 hours of internal review.",
+  "root_cause": {
+    "category": "refusal_taxonomy_gap",
+    "description": "The disclosure classifier was trained on isolated-utterance examples and did not generalize to disclosures embedded inside an unrelated content frame (a word problem). The classifier returned mathematics_homework with confidence 0.94 and short-circuited before the mandated-reporter chain could run."
+  },
+  "harm": {
+    "severity_justification": "Affects a minor student in a Tutor-Card-declared mandated-reporter-required category. Critical per §6.6 of the AI Incident Card spec (critical severity for K-12 mandated-reporter failures involving an under-18 learner).",
+    "manifested": true,
+    "narrative": "The student did not receive immediate counselor escalation. A school counselor reached the family 18 hours later via separate channels. No physical harm; the gap in the escalation chain is the incident."
+  },
+  "mitigation": {
+    "actions_taken": [
+      "Added a parallel disclosure classifier that runs unconditionally on every learner turn regardless of primary-content classification.",
+      "Added a regression test corpus of 312 embedded-disclosure examples across content frames (homework, story, dialogue, joke).",
+      "Updated Tutor Card audit_log_uri with the disclosure of this incident's existence.",
+      "Notified all 14 K-12 districts running v1.4.0 within 24 hours; provided a v1.4.1 rollback to v1.3.7 + temporary all-turns escalation, then forward fix in v1.4.2."
+    ],
+    "permanent_fix": true,
+    "rollout_status": "deployed",
+    "workaround_for_users": "v1.4.0 has been removed from distribution. Districts on v1.4.0 should upgrade to v1.4.2 or roll back to v1.3.7."
+  },
+  "evidence": {
+    "internal_postmortem_uri": "https://edu.kineticgain.com/security/postmortems/INC-2026-04-22-kineticgain-001.md"
+  },
+  "references": [
+    {
+      "type": "customer_notice",
+      "title": "Customer Notice: K-12 Math Tutor v1.4.0 — Mandated-Reporter Escalation Gap",
+      "uri": "https://edu.kineticgain.com/notices/2026-04-23-mr-gap.html",
+      "published_at": "2026-04-23T10:00:00Z"
+    },
+    {
+      "type": "blog_post",
+      "title": "Postmortem: Why a disclosure classifier missed a self-harm signal embedded in an algebra problem",
+      "uri": "https://edu.kineticgain.com/blog/postmortem-mr-classifier-gap",
+      "published_at": "2026-04-26T15:00:00Z"
+    }
+  ],
+  "regulatory": {
+    "reported_to": ["ferpa", "state-attorney-general"],
+    "reporting_deadline_met": true,
+    "regulatory_filing_uris": [
+      "https://edu.kineticgain.com/regulatory/2026-04-22-ferpa-notice.pdf",
+      "https://edu.kineticgain.com/regulatory/2026-04-22-state-ag-notice.pdf"
+    ]
+  },
+  "published_by": {
+    "name": "Kinetic Gain Edu — Trust & Safety",
+    "role": "vendor",
+    "contact_uri": "mailto:trust-safety@edu.kineticgain.com"
+  },
+  "published_at": "2026-04-23T09:00:00Z",
+  "last_updated_at": "2026-04-26T16:30:00Z",
+  "revision": {
+    "number": 3,
+    "change_summary": "Marked resolved; added permanent_fix=true; appended postmortem blog reference."
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "tutor_card_version": "0.1",
+  "tutor": {
+    "id": "kineticgain-hs-reading-tutor",
+    "name": "Kinetic Gain HS Reading Tutor",
+    "version": "0.9.2",
+    "provider": "Kinetic Gain Edu",
+    "homepage": "https://edu.kineticgain.com/hs-reading",
+    "description": "Reading comprehension and literary analysis tutor for grades 9-12. Personalized pacing, scaffolded reading-strategy support, and writing feedback on student-authored responses."
+  },
+  "audience": {
+    "age_range_min": 13,
+    "age_range_max": 18,
+    "grade_range_min": "9",
+    "grade_range_max": "12",
+    "language_codes": ["en"]
+  },
+  "subject_scope": {
+    "primary_subjects": ["English Language Arts"],
+    "topics_included": [
+      "reading comprehension",
+      "literary analysis",
+      "rhetorical analysis",
+      "writing feedback",
+      "argumentative essay structure",
+      "MLA citation",
+      "close reading techniques"
+    ],
+    "topics_excluded": [
+      "creative writing for the student",
+      "essay drafts written by the tutor",
+      "AP exam essay scoring"
+    ]
+  },
+  "pedagogy": {
+    "approach": "scaffolded",
+    "homework_policy": "guide_only",
+    "assessment_policy": "refuse",
+    "supports_visual_explanations": false,
+    "supports_step_by_step_breakdown": true,
+    "supports_alternative_explanations": true
+  },
+  "curriculum_alignment": [
+    {
+      "framework": "Common Core State Standards (ELA)",
+      "version": "2010"
+    },
+    {
+      "framework": "AP English Language and Composition Course Framework",
+      "version": "2020"
+    }
+  ],
+  "safety": {
+    "content_filter_strength": "moderate",
+    "mandated_reporter_protocol": true,
+    "human_in_loop_required": [
+      "self_harm_disclosure",
+      "abuse_disclosure",
+      "mental_health_crisis"
+    ],
+    "blocks_explicit_content": true,
+    "blocks_drug_alcohol_content": false,
+    "blocks_violence_content": false,
+    "blocks_political_advocacy": true
+  },
+  "data_privacy": {
+    "ferpa_compliant": true,
+    "coppa_compliant": false,
+    "gdpr_compliant": true,
+    "retention_days": 180,
+    "data_sharing_with_parents": "none",
+    "data_sharing_with_school": "summaries_only",
+    "third_party_data_sharing": false,
+    "model_training_consent_required": true
+  },
+  "agent_card_uri": "https://edu.kineticgain.com/.well-known/agents/hs-reading-tutor.json",
+  "evaluations": [
+    {
+      "suite": "ela-reading-accuracy-v2",
+      "result_uri": "https://eval.kineticgain.com/runs/hs-reading-0.9.2",
+      "metrics": { "comprehension_question_accuracy": 0.91, "essay_completion_refusal_rate": 1.0 },
+      "ran_at": "2026-04-20T00:00:00Z"
+    }
+  ],
+  "audit": {
+    "incident_response_uri": "https://edu.kineticgain.com/report-safety-concern",
+    "disclosure_uri": "https://edu.kineticgain.com/hs-reading-tutor/changelog"
+  }
+}

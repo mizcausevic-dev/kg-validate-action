@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mizcausevic-dev/mcp-tool-card-spec/blob/main/tool-card.schema.json",
+  "title": "MCP Tool Card",
+  "description": "Schema for an MCP Tool Card document describing one tool of one MCP server: schema, safety profile, tested-LLM matrix, performance, cost, and audit surface.",
+  "type": "object",
+  "required": ["tool_card_version", "tool", "schema", "safety", "audit"],
+  "additionalProperties": false,
+
+  "properties": {
+    "tool_card_version": { "type": "string", "const": "0.1" },
+    "tool": { "$ref": "#/$defs/Tool" },
+    "schema": { "$ref": "#/$defs/Schema" },
+    "safety": { "$ref": "#/$defs/Safety" },
+    "tested_with": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/TestEntry" }
+    },
+    "performance": { "$ref": "#/$defs/Performance" },
+    "cost": { "$ref": "#/$defs/Cost" },
+    "audit": { "$ref": "#/$defs/Audit" }
+  },
+
+  "allOf": [
+    {
+      "if": {
+        "properties": { "safety": { "properties": { "side_effect_class": { "const": "destructive" } } } }
+      },
+      "then": {
+        "properties": {
+          "safety": { "properties": { "human_approval_required": { "const": true } } }
+        }
+      }
+    }
+  ],
+
+  "$defs": {
+    "Tool": {
+      "type": "object",
+      "required": ["server_id", "name", "version", "mcp_server_uri", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "server_id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+].+)?$" },
+        "mcp_server_uri": { "type": "string", "format": "uri" },
+        "description": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "Schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "input_schema_uri": { "type": "string", "format": "uri" },
+        "input_schema_inline": { "type": "object" },
+        "output_schema_uri": { "type": "string", "format": "uri" },
+        "output_schema_inline": { "type": "object" }
+      },
+      "oneOf": [
+        { "required": ["input_schema_uri"] },
+        { "required": ["input_schema_inline"] }
+      ]
+    },
+
+    "Safety": {
+      "type": "object",
+      "required": ["side_effect_class", "reversible", "rate_limited", "pii_exposure", "secrets_exposure", "human_approval_required"],
+      "additionalProperties": false,
+      "properties": {
+        "side_effect_class": { "type": "string", "enum": ["read", "mutating", "external", "destructive"] },
+        "external_systems": { "type": "array", "items": { "type": "string" } },
+        "reversible": { "type": "boolean" },
+        "rate_limited": { "type": "boolean" },
+        "pii_exposure": { "type": "string", "enum": ["none", "low", "medium", "high"] },
+        "secrets_exposure": { "type": "string", "enum": ["none", "reads_secret_material", "writes_secret_material", "handles_keys"] },
+        "human_approval_required": { "type": "boolean" },
+        "refusal_modes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "TestEntry": {
+      "type": "object",
+      "required": ["llm", "test_suite_uri", "pass_rate", "tested_at"],
+      "additionalProperties": false,
+      "properties": {
+        "llm": { "type": "string", "minLength": 1 },
+        "provider": { "type": "string" },
+        "test_suite_uri": { "type": "string", "format": "uri" },
+        "pass_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "tested_at": { "type": "string", "format": "date-time" },
+        "sample_size": { "type": "integer", "minimum": 1 }
+      }
+    },
+
+    "Performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "p50_latency_ms": { "type": "integer", "minimum": 0 },
+        "p99_latency_ms": { "type": "integer", "minimum": 0 },
+        "measurement_window": { "type": "string" }
+      }
+    },
+
+    "Cost": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "per_call_amount": { "type": "number", "minimum": 0 },
+        "per_call_currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "notes": { "type": "string" }
+      }
+    },
+
+    "Audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "log_uri": { "type": "string", "format": "uri" },
+        "retention_days": { "type": "integer", "minimum": 1 },
+        "signed_by": { "type": "string" },
+        "incident_response_uri": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}

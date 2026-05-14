@@ -1,0 +1,51 @@
+{
+  "tool_card_version": "0.1",
+  "tool": {
+    "server_id": "kg-admin-mcp",
+    "name": "tenant-reset",
+    "version": "0.3.0",
+    "mcp_server_uri": "https://admin.kineticgain.com/mcp",
+    "description": "Resets a tenant to its initial-onboarding state. Drops user data, revokes all keys, archives historical records. Irreversible after 72 hours."
+  },
+  "schema": {
+    "input_schema_inline": {
+      "type": "object",
+      "required": ["tenant_id", "reason", "approver_ticket"],
+      "additionalProperties": false,
+      "properties": {
+        "tenant_id": { "type": "string", "pattern": "^tnt_[A-Za-z0-9]+$" },
+        "reason": { "type": "string", "minLength": 10 },
+        "approver_ticket": { "type": "string", "pattern": "^OPS-\\d+$" }
+      }
+    }
+  },
+  "safety": {
+    "side_effect_class": "destructive",
+    "external_systems": ["primary-postgres", "object-storage", "kms"],
+    "reversible": false,
+    "rate_limited": true,
+    "pii_exposure": "high",
+    "secrets_exposure": "writes_secret_material",
+    "human_approval_required": true,
+    "refusal_modes": [
+      "no_approver_ticket",
+      "approver_ticket_unverified",
+      "tenant_has_active_incident",
+      "within_24h_of_billing_event"
+    ]
+  },
+  "tested_with": [
+    { "llm": "claude-opus-4-7", "provider": "Anthropic", "test_suite_uri": "https://eval.kineticgain.com/suites/mcp-admin-destructive-v1", "pass_rate": 1.0, "tested_at": "2026-05-10T16:00:00Z", "sample_size": 50 }
+  ],
+  "performance": {
+    "p50_latency_ms": 4200,
+    "p99_latency_ms": 28000,
+    "measurement_window": "last_30d"
+  },
+  "audit": {
+    "log_uri": "https://audit.kineticgain.com/mcp/tenant-reset",
+    "retention_days": 2555,
+    "signed_by": "kg-admin-mcp",
+    "incident_response_uri": "https://kineticgain.com/security/report"
+  }
+}

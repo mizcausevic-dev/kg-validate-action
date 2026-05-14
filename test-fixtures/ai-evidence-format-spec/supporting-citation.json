@@ -1,0 +1,30 @@
+{
+  "evidence_version": "0.1",
+  "evidence_id": "ev-2026-05-12-a4f9c1",
+  "claim_text": "The AEO Protocol defines three pillars: Declare, Discover, and Audit.",
+  "source": {
+    "uri": "https://github.com/mizcausevic-dev/aeo-protocol-spec/blob/main/SPEC.md",
+    "type": "document",
+    "title": "AEO Protocol v0.1 — Specification",
+    "publisher": "mizcausevic-dev",
+    "fetched_at": "2026-05-12T03:45:00Z"
+  },
+  "span": {
+    "selector_type": "text_quote",
+    "selector_value": "## 3. The three pillars",
+    "exact_text": "## 3. The three pillars\n\n### 3.1 Declare\n\nThe entity publishes a single JSON document at a fixed path describing itself.",
+    "surrounding_context": "Section §3 of the specification document."
+  },
+  "retrieval": {
+    "method": "hybrid",
+    "confidence": 0.93,
+    "rank": 1,
+    "freshness_age_seconds": 90,
+    "retriever_id": "kinetic-rag-v3"
+  },
+  "verification": {
+    "content_hash": "sha256:c7d1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1",
+    "signed_by": "kinetic-rag-pipeline"
+  },
+  "synthesis_role": "supporting"
+}

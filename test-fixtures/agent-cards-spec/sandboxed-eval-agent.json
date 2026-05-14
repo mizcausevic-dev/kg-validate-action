@@ -1,0 +1,37 @@
+{
+  "agent_card_version": "0.1",
+  "agent": {
+    "id": "eval-arena-judge",
+    "name": "Eval Arena Judge",
+    "version": "0.7.3",
+    "provider": "Kinetic Gain",
+    "description": "Autonomous LLM-as-judge agent for eval-arena. Scores model outputs against a rubric, generates calibration confidence intervals. Runs only inside the eval-arena sandbox; has no production access."
+  },
+  "capabilities": {
+    "primary_purpose": "Score candidate LLM outputs against a published rubric and emit calibrated confidence.",
+    "models_used": [
+      { "name": "claude-opus-4-7", "provider": "Anthropic", "role": "judge" }
+    ],
+    "tools": [
+      { "name": "rubric-fetch", "side_effects": "read" },
+      { "name": "score-emit", "side_effects": "mutating" }
+    ],
+    "max_context_tokens": 200000,
+    "memory_persistence": "none",
+    "autonomy_level": "autonomous"
+  },
+  "refusal_taxonomy": [
+    { "category": "out_of_sandbox_tool_call", "behavior": "refuse_silently" }
+  ],
+  "evaluations": [
+    { "suite": "judge-calibration-v4", "result_uri": "https://eval.kineticgain.com/runs/eval-arena-judge-0.7.3", "metrics": { "ece": 0.04, "kendall_tau_vs_human": 0.71 }, "ran_at": "2026-05-10T18:00:00Z" }
+  ],
+  "deployment": {
+    "environment": "sandbox"
+  },
+  "safety_posture": {
+    "human_in_loop_required": [],
+    "audit_log_uri": "https://kineticgain.com/audit/agents/eval-arena-judge",
+    "incident_response_uri": "https://kineticgain.com/agents/incident-report"
+  }
+}

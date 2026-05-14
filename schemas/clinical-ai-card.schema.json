@@ -1,0 +1,455 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mizcausevic-dev/clinical-ai-disclosure-spec/blob/main/clinical-ai-card.schema.json",
+  "title": "Clinical AI Card",
+  "description": "Schema for a Clinical AI Card v0.1 document — declarative disclosure of an AI system used in healthcare. Captures clinical context, FDA / SaMD status, evidence, HIPAA posture, EHR integration, and safety posture.",
+  "type": "object",
+  "required": [
+    "clinical_ai_card_version",
+    "system",
+    "clinical_context",
+    "regulatory",
+    "clinical_role",
+    "evidence",
+    "patient_data",
+    "safety"
+  ],
+  "additionalProperties": false,
+
+  "properties": {
+    "clinical_ai_card_version": { "type": "string", "const": "0.1" },
+    "system": { "$ref": "#/$defs/System" },
+    "clinical_context": { "$ref": "#/$defs/ClinicalContext" },
+    "regulatory": { "$ref": "#/$defs/Regulatory" },
+    "clinical_role": { "$ref": "#/$defs/ClinicalRole" },
+    "evidence": { "$ref": "#/$defs/Evidence" },
+    "patient_data": { "$ref": "#/$defs/PatientData" },
+    "safety": { "$ref": "#/$defs/Safety" },
+    "ehr_integration": { "$ref": "#/$defs/EhrIntegration" },
+    "agent_card_uri": { "type": "string", "format": "uri" },
+    "evaluations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Evaluation" }
+    },
+    "audit": { "$ref": "#/$defs/Audit" }
+  },
+
+  "allOf": [
+    {
+      "description": "Autonomy in clinical roles requires medical-device classification.",
+      "if": {
+        "properties": {
+          "clinical_role": {
+            "properties": { "decision_support_level": { "const": "autonomous" } }
+          }
+        },
+        "required": ["clinical_role"]
+      },
+      "then": {
+        "properties": {
+          "regulatory": {
+            "properties": { "is_medical_device": { "const": true } }
+          }
+        }
+      }
+    },
+    {
+      "description": "SaMD requires class + classification rationale.",
+      "if": {
+        "properties": {
+          "regulatory": {
+            "properties": { "is_software_as_medical_device": { "const": true } }
+          }
+        },
+        "required": ["regulatory"]
+      },
+      "then": {
+        "properties": {
+          "regulatory": {
+            "required": ["samd_class", "samd_classification_rationale"]
+          }
+        }
+      }
+    },
+    {
+      "description": "FDA clearance values require clearance number and URI.",
+      "if": {
+        "properties": {
+          "regulatory": {
+            "properties": {
+              "fda_status": { "enum": ["510k_cleared", "de_novo", "pma"] }
+            }
+          }
+        },
+        "required": ["regulatory"]
+      },
+      "then": {
+        "properties": {
+          "regulatory": {
+            "required": ["fda_clearance_number", "fda_clearance_uri"]
+          }
+        }
+      }
+    },
+    {
+      "description": "PHI processing requires explicit HIPAA + BAA posture.",
+      "if": {
+        "properties": {
+          "patient_data": {
+            "properties": { "phi_processed": { "const": true } }
+          }
+        },
+        "required": ["patient_data"]
+      },
+      "then": {
+        "properties": {
+          "patient_data": {
+            "required": ["hipaa_compliant", "baa_required"]
+          }
+        }
+      }
+    },
+    {
+      "description": "SaMD class II+ requires bias audit URI.",
+      "if": {
+        "properties": {
+          "regulatory": {
+            "type": "object",
+            "required": ["samd_class"],
+            "properties": {
+              "samd_class": { "enum": ["II", "III", "IV"] }
+            }
+          }
+        },
+        "required": ["regulatory"]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "required": ["bias_audit_uri"]
+          }
+        }
+      }
+    },
+    {
+      "description": "Autonomous decision support requires bias audit URI.",
+      "if": {
+        "properties": {
+          "clinical_role": {
+            "type": "object",
+            "required": ["decision_support_level"],
+            "properties": { "decision_support_level": { "const": "autonomous" } }
+          }
+        },
+        "required": ["clinical_role"]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "required": ["bias_audit_uri"]
+          }
+        }
+      }
+    },
+    {
+      "description": "Pre-authorization use requires bias audit URI.",
+      "if": {
+        "properties": {
+          "clinical_role": {
+            "type": "object",
+            "required": ["pre_authorization_use"],
+            "properties": { "pre_authorization_use": { "const": true } }
+          }
+        },
+        "required": ["clinical_role"]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "required": ["bias_audit_uri"]
+          }
+        }
+      }
+    }
+  ],
+
+  "$defs": {
+    "System": {
+      "type": "object",
+      "required": ["id", "name", "version", "provider", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$" },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+].+)?$" },
+        "provider": { "type": "string", "minLength": 1 },
+        "homepage": { "type": "string", "format": "uri" },
+        "description": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "ClinicalContext": {
+      "type": "object",
+      "required": [
+        "indication",
+        "care_settings",
+        "patient_population",
+        "intended_use",
+        "off_label_uses_prohibited"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "indication": { "type": "string", "minLength": 1 },
+        "care_settings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "inpatient",
+              "outpatient",
+              "icu",
+              "ed",
+              "home",
+              "telehealth",
+              "research",
+              "pharmacy",
+              "radiology",
+              "pathology"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "patient_population": {
+          "type": "object",
+          "required": ["age_range_min", "age_range_max"],
+          "additionalProperties": false,
+          "properties": {
+            "age_range_min": { "type": "integer", "minimum": 0 },
+            "age_range_max": { "type": "integer", "maximum": 130 },
+            "exclusions": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true
+            }
+          }
+        },
+        "intended_use": { "type": "string", "minLength": 1 },
+        "off_label_uses_prohibited": { "type": "boolean" }
+      }
+    },
+
+    "Regulatory": {
+      "type": "object",
+      "required": [
+        "fda_status",
+        "is_medical_device",
+        "is_clinical_decision_support",
+        "is_software_as_medical_device"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "fda_status": {
+          "type": "string",
+          "enum": [
+            "510k_cleared",
+            "de_novo",
+            "pma",
+            "enforcement_discretion",
+            "research_use_only",
+            "not_applicable"
+          ]
+        },
+        "fda_clearance_number": { "type": "string", "pattern": "^[A-Z]\\d{6}$|^DEN\\d{6}$|^P\\d{6}$" },
+        "fda_clearance_uri": { "type": "string", "format": "uri" },
+        "iso_certifications": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "is_medical_device": { "type": "boolean" },
+        "is_clinical_decision_support": { "type": "boolean" },
+        "is_software_as_medical_device": { "type": "boolean" },
+        "samd_class": { "type": "string", "enum": ["I", "II", "III", "IV"] },
+        "samd_classification_rationale": { "type": "string", "minLength": 1 },
+        "regional_authorizations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["region", "status"],
+            "additionalProperties": false,
+            "properties": {
+              "region": { "type": "string", "minLength": 1 },
+              "status": { "type": "string", "minLength": 1 },
+              "identifier": { "type": "string", "minLength": 1 },
+              "uri": { "type": "string", "format": "uri" }
+            }
+          }
+        },
+        "notes": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "ClinicalRole": {
+      "type": "object",
+      "required": [
+        "decision_support_level",
+        "clinician_override_required",
+        "patient_facing_only",
+        "transparency_to_patient_required"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "decision_support_level": {
+          "type": "string",
+          "enum": ["informational", "advisory", "autonomous"]
+        },
+        "clinician_override_required": { "type": "boolean" },
+        "patient_facing_only": { "type": "boolean" },
+        "transparency_to_patient_required": { "type": "boolean" },
+        "pre_authorization_use": { "type": "boolean" }
+      }
+    },
+
+    "PerformanceMetrics": {
+      "type": "object",
+      "required": ["measurement_population"],
+      "additionalProperties": false,
+      "properties": {
+        "measurement_population": { "type": "string", "minLength": 1 },
+        "sensitivity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "specificity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "auc": { "type": "number", "minimum": 0, "maximum": 1 },
+        "accuracy": { "type": "number", "minimum": 0, "maximum": 1 },
+        "false_positive_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "false_negative_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "precision": { "type": "number", "minimum": 0, "maximum": 1 },
+        "recall": { "type": "number", "minimum": 0, "maximum": 1 },
+        "f1": { "type": "number", "minimum": 0, "maximum": 1 },
+        "ppv": { "type": "number", "minimum": 0, "maximum": 1 },
+        "npv": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+
+    "Evidence": {
+      "type": "object",
+      "required": ["validation_studies", "training_data_sources", "performance_metrics"],
+      "additionalProperties": false,
+      "properties": {
+        "validation_studies": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["title", "uri", "population_size", "primary_outcome", "results_summary", "peer_reviewed"],
+            "additionalProperties": false,
+            "properties": {
+              "title": { "type": "string", "minLength": 1 },
+              "uri": { "type": "string", "format": "uri" },
+              "population_size": { "type": "integer", "minimum": 1 },
+              "primary_outcome": { "type": "string", "minLength": 1 },
+              "results_summary": { "type": "string", "minLength": 1 },
+              "peer_reviewed": { "type": "boolean" },
+              "published_at": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "training_data_sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "bias_audit_uri": { "type": "string", "format": "uri" },
+        "performance_metrics": { "$ref": "#/$defs/PerformanceMetrics" }
+      }
+    },
+
+    "PatientData": {
+      "type": "object",
+      "required": [
+        "phi_processed",
+        "retention_days",
+        "patient_consent_required",
+        "third_party_data_sharing"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "phi_processed": { "type": "boolean" },
+        "hipaa_compliant": { "type": "boolean" },
+        "baa_required": { "type": "boolean" },
+        "de_identification_method": {
+          "type": "string",
+          "enum": ["safe-harbor", "expert-determination", "none", "not-applicable"]
+        },
+        "retention_days": { "type": "integer", "minimum": 0 },
+        "patient_consent_required": { "type": "boolean" },
+        "consent_flow_uri": { "type": "string", "format": "uri" },
+        "third_party_data_sharing": { "type": "boolean" },
+        "model_training_consent_required": { "type": "boolean" }
+      }
+    },
+
+    "Safety": {
+      "type": "object",
+      "required": ["human_in_loop_required_for", "mandatory_reporting_categories"],
+      "additionalProperties": false,
+      "properties": {
+        "human_in_loop_required_for": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "escalation_protocols": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "mandatory_reporting_categories": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "blocks_diagnostic_claims": { "type": "boolean" },
+        "treatment_recommendation_disclaimer_required": { "type": "boolean" }
+      }
+    },
+
+    "EhrIntegration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fhir_version": { "type": "string", "enum": ["R4", "R5", "STU3", "DSTU2"] },
+        "supports_smart_on_fhir": { "type": "boolean" },
+        "supports_cds_hooks": { "type": "boolean" },
+        "ehr_vendors_supported": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+
+    "Evaluation": {
+      "type": "object",
+      "required": ["suite", "result_uri", "ran_at"],
+      "additionalProperties": false,
+      "properties": {
+        "suite": { "type": "string", "minLength": 1 },
+        "result_uri": { "type": "string", "format": "uri" },
+        "metrics": { "type": "object" },
+        "ran_at": { "type": "string", "format": "date-time" },
+        "accreditation_body": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "Audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "audit_log_uri": { "type": "string", "format": "uri" },
+        "incident_response_uri": { "type": "string", "format": "uri" },
+        "incident_card_index_uri": { "type": "string", "format": "uri" },
+        "disclosure_uri": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}

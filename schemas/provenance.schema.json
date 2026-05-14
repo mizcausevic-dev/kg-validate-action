@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mizcausevic-dev/prompt-provenance-spec/blob/main/provenance.schema.json",
+  "title": "Prompt Provenance Document",
+  "description": "Schema for a Prompt Provenance document describing one version of one prompt: identity, lineage, authorship, evaluations, and approval state.",
+  "type": "object",
+  "required": ["provenance_version", "prompt", "lineage", "authorship", "approval"],
+  "additionalProperties": false,
+
+  "properties": {
+    "provenance_version": { "type": "string", "const": "0.1" },
+    "prompt": { "$ref": "#/$defs/Prompt" },
+    "lineage": { "$ref": "#/$defs/Lineage" },
+    "authorship": { "$ref": "#/$defs/Authorship" },
+    "intent": { "$ref": "#/$defs/Intent" },
+    "evaluations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Evaluation" }
+    },
+    "approval": { "$ref": "#/$defs/Approval" },
+    "deprecation": { "$ref": "#/$defs/Deprecation" }
+  },
+
+  "allOf": [
+    {
+      "if": {
+        "properties": { "approval": { "properties": { "state": { "const": "deprecated" } } } }
+      },
+      "then": { "required": ["deprecation"] }
+    }
+  ],
+
+  "$defs": {
+    "Prompt": {
+      "type": "object",
+      "required": ["id", "name", "version", "hash", "content_uri", "content_type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$" },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+].+)?$" },
+        "hash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "content_uri": { "type": "string", "format": "uri" },
+        "content_type": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "Lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "parent": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]@\\d+\\.\\d+\\.\\d+(?:[-+].+)?$" },
+        "derivation": { "type": "string", "enum": ["fork", "tune", "patch"] },
+        "change_summary": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["parent"] },
+          "then": { "required": ["derivation", "change_summary"] }
+        }
+      ]
+    },
+
+    "Authorship": {
+      "type": "object",
+      "required": ["created_by", "created_at"],
+      "additionalProperties": false,
+      "properties": {
+        "created_by": { "type": "string", "minLength": 1 },
+        "reviewed_by": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "approved_by": { "type": "string", "minLength": 1 },
+        "created_at": { "type": "string", "format": "date-time" },
+        "approved_at": { "type": "string", "format": "date-time" }
+      }
+    },
+
+    "Intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "purpose": { "type": "string", "minLength": 1 },
+        "in_scope": { "type": "array", "items": { "type": "string" } },
+        "out_of_scope": { "type": "array", "items": { "type": "string" } },
+        "models_supported": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "Evaluation": {
+      "type": "object",
+      "required": ["suite", "result_uri", "passed", "ran_at"],
+      "additionalProperties": false,
+      "properties": {
+        "suite": { "type": "string", "minLength": 1 },
+        "result_uri": { "type": "string", "format": "uri" },
+        "score": { "type": "number" },
+        "passed": { "type": "boolean" },
+        "ran_at": { "type": "string", "format": "date-time" }
+      }
+    },
+
+    "Approval": {
+      "type": "object",
+      "required": ["state"],
+      "additionalProperties": false,
+      "properties": {
+        "state": { "type": "string", "enum": ["draft", "under_review", "approved", "rejected", "deprecated"] },
+        "policy_uri": { "type": "string", "format": "uri" }
+      }
+    },
+
+    "Deprecation": {
+      "type": "object",
+      "required": ["reason", "deprecated_at"],
+      "additionalProperties": false,
+      "properties": {
+        "reason": { "type": "string", "minLength": 1 },
+        "superseded_by": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]@\\d+\\.\\d+\\.\\d+(?:[-+].+)?$" },
+        "deprecated_at": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

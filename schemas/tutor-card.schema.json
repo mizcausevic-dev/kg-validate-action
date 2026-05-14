@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mizcausevic-dev/ai-tutor-card-spec/blob/main/tutor-card.schema.json",
+  "title": "AI Tutor Card",
+  "description": "Schema for an AI Tutor Card v0.1 document — declarative disclosure of an AI tutor's audience, pedagogy, safety, and student-data privacy posture.",
+  "type": "object",
+  "required": [
+    "tutor_card_version",
+    "tutor",
+    "audience",
+    "subject_scope",
+    "pedagogy",
+    "safety",
+    "data_privacy"
+  ],
+  "additionalProperties": false,
+
+  "properties": {
+    "tutor_card_version": { "type": "string", "const": "0.1" },
+    "tutor": { "$ref": "#/$defs/Tutor" },
+    "audience": { "$ref": "#/$defs/Audience" },
+    "subject_scope": { "$ref": "#/$defs/SubjectScope" },
+    "pedagogy": { "$ref": "#/$defs/Pedagogy" },
+    "curriculum_alignment": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/CurriculumFramework" }
+    },
+    "safety": { "$ref": "#/$defs/Safety" },
+    "data_privacy": { "$ref": "#/$defs/DataPrivacy" },
+    "agent_card_uri": { "type": "string", "format": "uri" },
+    "evaluations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/Evaluation" }
+    },
+    "audit": { "$ref": "#/$defs/Audit" }
+  },
+
+  "allOf": [
+    {
+      "if": {
+        "properties": { "audience": { "properties": { "age_range_min": { "type": "integer", "maximum": 12 } } } }
+      },
+      "then": {
+        "properties": {
+          "data_privacy": { "properties": { "coppa_compliant": { "const": true } } }
+        }
+      }
+    }
+  ],
+
+  "$defs": {
+    "Tutor": {
+      "type": "object",
+      "required": ["id", "name", "version", "provider", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$" },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+].+)?$" },
+        "provider": { "type": "string", "minLength": 1 },
+        "homepage": { "type": "string", "format": "uri" },
+        "description": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "Audience": {
+      "type": "object",
+      "required": ["age_range_min", "age_range_max", "grade_range_min", "grade_range_max", "language_codes"],
+      "additionalProperties": false,
+      "properties": {
+        "age_range_min": { "type": "integer", "minimum": 3, "maximum": 99 },
+        "age_range_max": { "type": "integer", "minimum": 3, "maximum": 99 },
+        "grade_range_min": { "type": "string", "minLength": 1 },
+        "grade_range_max": { "type": "string", "minLength": 1 },
+        "language_codes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Z]{2})?$" }
+        }
+      }
+    },
+
+    "SubjectScope": {
+      "type": "object",
+      "required": ["primary_subjects"],
+      "additionalProperties": false,
+      "properties": {
+        "primary_subjects": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "topics_included": { "type": "array", "items": { "type": "string" } },
+        "topics_excluded": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "Pedagogy": {
+      "type": "object",
+      "required": ["approach", "homework_policy", "assessment_policy"],
+      "additionalProperties": false,
+      "properties": {
+        "approach": {
+          "type": "string",
+          "enum": ["socratic", "direct_instruction", "scaffolded", "personalized", "mixed"]
+        },
+        "homework_policy": {
+          "type": "string",
+          "enum": ["complete", "guide_only", "refuse"]
+        },
+        "assessment_policy": {
+          "type": "string",
+          "enum": ["complete", "guide_only", "refuse"]
+        },
+        "supports_visual_explanations": { "type": "boolean" },
+        "supports_step_by_step_breakdown": { "type": "boolean" },
+        "supports_alternative_explanations": { "type": "boolean" }
+      }
+    },
+
+    "CurriculumFramework": {
+      "type": "object",
+      "required": ["framework"],
+      "additionalProperties": false,
+      "properties": {
+        "framework": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "coverage_uri": { "type": "string", "format": "uri" }
+      }
+    },
+
+    "Safety": {
+      "type": "object",
+      "required": ["content_filter_strength", "mandated_reporter_protocol", "human_in_loop_required"],
+      "additionalProperties": false,
+      "properties": {
+        "content_filter_strength": {
+          "type": "string",
+          "enum": ["strict", "moderate", "light"]
+        },
+        "mandated_reporter_protocol": { "type": "boolean" },
+        "human_in_loop_required": { "type": "array", "items": { "type": "string" } },
+        "blocks_explicit_content": { "type": "boolean" },
+        "blocks_drug_alcohol_content": { "type": "boolean" },
+        "blocks_violence_content": { "type": "boolean" },
+        "blocks_political_advocacy": { "type": "boolean" }
+      }
+    },
+
+    "DataPrivacy": {
+      "type": "object",
+      "required": [
+        "ferpa_compliant",
+        "coppa_compliant",
+        "gdpr_compliant",
+        "retention_days",
+        "data_sharing_with_parents",
+        "data_sharing_with_school",
+        "third_party_data_sharing"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "ferpa_compliant": { "type": "boolean" },
+        "coppa_compliant": { "type": "boolean" },
+        "gdpr_compliant": { "type": "boolean" },
+        "retention_days": { "type": "integer", "minimum": 0 },
+        "data_sharing_with_parents": {
+          "type": "string",
+          "enum": ["full_transcript", "summaries_only", "none"]
+        },
+        "data_sharing_with_school": {
+          "type": "string",
+          "enum": ["full_transcript", "summaries_only", "none"]
+        },
+        "third_party_data_sharing": { "type": "boolean" },
+        "model_training_consent_required": { "type": "boolean" }
+      }
+    },
+
+    "Evaluation": {
+      "type": "object",
+      "required": ["suite", "result_uri", "ran_at"],
+      "additionalProperties": false,
+      "properties": {
+        "suite": { "type": "string", "minLength": 1 },
+        "result_uri": { "type": "string", "format": "uri" },
+        "metrics": { "type": "object" },
+        "ran_at": { "type": "string", "format": "date-time" }
+      }
+    },
+
+    "Audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "audit_log_uri": { "type": "string", "format": "uri" },
+        "incident_response_uri": { "type": "string", "format": "uri" },
+        "disclosure_uri": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}

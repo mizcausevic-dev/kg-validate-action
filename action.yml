@@ -1,0 +1,25 @@
+name: 'Kinetic Gain Validate'
+description: 'Validate JSON files against the ten Kinetic Gain Protocol Suite specs (AEO, Prompt Provenance, Agent Cards, AI Evidence, MCP Tool Cards, AI Tutor Cards, Student AI Disclosure, Classroom AI AUP, Clinical AI Card, AI Incident Card).'
+author: 'Miz Causevic / Kinetic Gain LLC'
+branding:
+  icon: 'check-circle'
+  color: 'green'
+inputs:
+  files:
+    description: 'Glob pattern for JSON files to validate. Default targets the canonical well-known location, but any glob works.'
+    required: false
+    default: '.well-known/**/*.json'
+runs:
+  using: composite
+  steps:
+    - name: Set up Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - name: Install validator dependencies
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: npm install --silent --no-fund --no-audit
+    - name: Run kg-validate
+      shell: bash
+      run: node "${{ github.action_path }}/validate.js" "${{ inputs.files }}"

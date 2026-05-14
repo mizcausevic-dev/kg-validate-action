@@ -1,0 +1,58 @@
+{
+  "disclosure_version": "0.1",
+  "disclosure_id": "d-2026-05-12-b4f9c1e8",
+  "created_at": "2026-05-12T16:42:00Z",
+  "student": {
+    "id": "stu-9c2e44",
+    "grade_or_year": "11",
+    "institution_id": "lincoln-high-district-42"
+  },
+  "assignment": {
+    "id": "assn-2026-bio-lab-7",
+    "title": "Cell Respiration Lab Report",
+    "course_id": "course-bio-11-spring-2026",
+    "lms": "canvas",
+    "due_at": "2026-05-13T23:59:00Z"
+  },
+  "ai_used": true,
+  "tools_used": [
+    {
+      "name": "Claude.ai",
+      "provider": "Anthropic",
+      "version": "claude-sonnet-4-6"
+    }
+  ],
+  "roles": ["edit", "cite_check"],
+  "assistance_extent": "minor",
+  "assistance_pct": 8,
+  "prompt_evidence_mode": "hashed",
+  "prompts": [
+    {
+      "id": "p1",
+      "hash": "sha256:c7d1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1",
+      "at": "2026-05-12T15:55:00Z",
+      "tool_index": 0
+    },
+    {
+      "id": "p2",
+      "hash": "sha256:e1d2c3b4a5968778695a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e",
+      "at": "2026-05-12T16:18:00Z",
+      "tool_index": 0
+    }
+  ],
+  "artifact_hash": "sha256:1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+  "artifact_uri": "https://lincoln-high.instructure.com/files/889944/download",
+  "aup_uri": "https://lincoln-high-district-42.edu/.well-known/ai-aup.json",
+  "policy_compliant": {
+    "declared": true,
+    "reason": "AUP §3.2 permits AI-assisted grammar review and citation verification for lab reports."
+  },
+  "signed_by_student": true,
+  "student_signature_at": "2026-05-12T16:42:00Z",
+  "teacher_acknowledged": {
+    "acknowledged": true,
+    "by": "teacher-rivera-m",
+    "at": "2026-05-13T08:15:00Z",
+    "note": "Reviewed. Compliant with course AI policy."
+  }
+}

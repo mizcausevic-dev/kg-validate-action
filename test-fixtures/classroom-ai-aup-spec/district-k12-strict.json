@@ -1,0 +1,83 @@
+{
+  "aup_version": "0.1",
+  "policy_id": "lincoln-district-42-2026-ai-aup",
+  "policy_name": "Lincoln High District 42 — Classroom AI Acceptable Use Policy",
+  "version": "1.2.0",
+  "effective_at": "2026-01-15T00:00:00Z",
+  "scope": {
+    "type": "district",
+    "institution_id": "lincoln-high-district-42",
+    "grade_bands": ["K-5", "6-8", "9-12"]
+  },
+  "permitted_use": {
+    "permitted_roles": ["edit", "cite_check", "translate", "tutor_dialog"],
+    "permitted_tool_categories": ["tutoring", "translation"],
+    "permitted_tools": [
+      {
+        "name": "Kinetic Gain K-12 Math Tutor",
+        "tutor_card_uri": "https://edu.kineticgain.com/.well-known/tutors/k12-math-tutor.json",
+        "notes": "District-approved math tutor; FERPA + COPPA attested."
+      }
+    ],
+    "assistance_extent_max": "minor"
+  },
+  "prohibited_use": {
+    "prohibited_roles": ["draft", "image_generation"],
+    "prohibited_uses": [
+      "Generating answers to assessment items (quizzes, tests, exams).",
+      "Producing first-draft prose for English Language Arts assignments.",
+      "Any use by students under 13 without recorded parent consent."
+    ]
+  },
+  "disclosure_requirements": {
+    "required_when": "when_used",
+    "required_prompt_evidence_mode": "hashed",
+    "signature_required": true,
+    "teacher_acknowledgment_required": true,
+    "artifact_hash_required": true
+  },
+  "supervision": {
+    "level": "teacher_visible",
+    "human_in_loop_categories": [
+      "mental_health_disclosure",
+      "abuse_disclosure",
+      "self_harm_disclosure"
+    ]
+  },
+  "vendor_requirements": {
+    "requires_tutor_card": true,
+    "requires_agent_card": false,
+    "required_compliance": ["ferpa", "coppa"],
+    "state_specific_laws": ["NY-Ed-Law-2-D"],
+    "required_content_filter_strength_min": "strict",
+    "requires_mandated_reporter_protocol": true,
+    "requires_human_in_loop_for": [
+      "mental_health_disclosure",
+      "abuse_disclosure",
+      "self_harm_disclosure"
+    ],
+    "retention_days_max": 90,
+    "prohibits_third_party_data_sharing": true,
+    "prohibits_model_training_on_student_data": true
+  },
+  "parent_notification": {
+    "notification_level": "at_enrollment",
+    "parent_consent_required": true,
+    "consent_age_threshold": 13
+  },
+  "enforcement": {
+    "violation_response": [
+      "First offense: referral to academic integrity office and required AI-use briefing.",
+      "Second offense: grade reduction on affected assignment.",
+      "Third offense: referral to school disciplinary committee."
+    ],
+    "appeals_process_uri": "https://lincoln-high-district-42.edu/students/ai-policy-appeals"
+  },
+  "published_by": {
+    "name": "Lincoln High District 42 — Office of the Superintendent",
+    "role": "district",
+    "contact_uri": "mailto:ai-policy@lincoln-high-district-42.edu"
+  },
+  "published_at": "2026-01-08T15:30:00Z",
+  "audit_log_uri": "https://lincoln-high-district-42.edu/.well-known/ai-aup-changelog.json"
+}

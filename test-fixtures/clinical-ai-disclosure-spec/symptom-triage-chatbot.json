@@ -1,0 +1,105 @@
+{
+  "clinical_ai_card_version": "0.1",
+  "system": {
+    "id": "kineticgain-symptom-triage",
+    "name": "Kinetic Gain Symptom Triage Assistant",
+    "version": "1.6.0",
+    "provider": "Kinetic Gain Health",
+    "homepage": "https://triage.kineticgain.com",
+    "description": "Patient-facing chatbot that helps users decide whether their symptoms warrant a same-day visit, a virtual visit, or self-care. Informational only — does not make diagnoses, does not recommend specific medications, does not replace professional medical advice."
+  },
+  "clinical_context": {
+    "indication": "Pre-encounter symptom triage for adult patients seeking guidance on whether and how to seek care. Indication scope: common acute symptoms (respiratory, GI, musculoskeletal, dermatologic). Not for emergencies — system immediately directs users to 911 or local emergency services when red-flag symptoms are detected.",
+    "care_settings": ["home", "telehealth"],
+    "patient_population": {
+      "age_range_min": 18,
+      "age_range_max": 89,
+      "exclusions": [
+        "pediatrics-under-18",
+        "pregnancy",
+        "active-chemotherapy-patients",
+        "transplant-recipients"
+      ]
+    },
+    "intended_use": "Patient-facing symptom triage and care-navigation assistant. Provides educational information and routes users to appropriate care channels. Does not provide diagnoses or treatment recommendations.",
+    "off_label_uses_prohibited": true
+  },
+  "regulatory": {
+    "fda_status": "enforcement_discretion",
+    "is_medical_device": false,
+    "is_clinical_decision_support": true,
+    "is_software_as_medical_device": false,
+    "notes": "Vendor position: this system meets the 21st Century Cures Act §3060 CDS exclusion (does not analyze imaging / signals; provides recommendations the user can independently review; discloses underlying basis). FDA has issued enforcement-discretion guidance for general-wellness apps in this category. Vendor will reclassify if guidance changes."
+  },
+  "clinical_role": {
+    "decision_support_level": "informational",
+    "clinician_override_required": false,
+    "patient_facing_only": true,
+    "transparency_to_patient_required": true,
+    "pre_authorization_use": false
+  },
+  "evidence": {
+    "validation_studies": [
+      {
+        "title": "Comparative concordance of Kinetic Gain Symptom Triage with board-certified triage nurses",
+        "uri": "https://triage.kineticgain.com/studies/concordance-2025.pdf",
+        "population_size": 8412,
+        "primary_outcome": "Agreement (kappa) between system recommendation and nurse triage recommendation across 4 acuity levels",
+        "results_summary": "Weighted Cohen's kappa 0.74 (substantial agreement). System over-triaged (recommended higher acuity than nurse) 18% of the time; under-triaged 4%. Under-triage events were reviewed by clinical safety team; none involved missed life-threatening conditions.",
+        "peer_reviewed": true,
+        "published_at": "2025-11-15T00:00:00Z"
+      }
+    ],
+    "training_data_sources": [
+      "Annotated conversational transcripts (N=42k) from in-house triage-nurse consultations, 2022-2024, de-identified under Safe Harbor",
+      "Public symptom-checker datasets (Symptom Assessment Application Validation, SYMPTEMIST)",
+      "Clinical guidelines content (ACEP, AAFP)"
+    ],
+    "performance_metrics": {
+      "measurement_population": "US adult users self-referring to the triage chatbot, 2024-2025 (validation cohort)",
+      "sensitivity": 0.91,
+      "specificity": 0.66,
+      "false_positive_rate": 0.34,
+      "false_negative_rate": 0.09
+    }
+  },
+  "patient_data": {
+    "phi_processed": true,
+    "hipaa_compliant": true,
+    "baa_required": false,
+    "de_identification_method": "safe-harbor",
+    "retention_days": 30,
+    "patient_consent_required": true,
+    "consent_flow_uri": "https://triage.kineticgain.com/consent",
+    "third_party_data_sharing": false,
+    "model_training_consent_required": true
+  },
+  "safety": {
+    "human_in_loop_required_for": [
+      "suspected-suicide-risk",
+      "suspected-domestic-violence",
+      "suspected-substance-overdose"
+    ],
+    "escalation_protocols": [
+      "Red-flag symptoms (chest pain, neuro deficit, severe bleeding, anaphylaxis, suicidal ideation) trigger an immediate full-screen takeover with 911 instructions; conversation pauses until user confirms.",
+      "Suicide-risk disclosures are escalated to a 988 warm-handoff workflow regardless of acuity level."
+    ],
+    "mandatory_reporting_categories": [
+      "suspected-suicide-risk",
+      "suspected-child-abuse",
+      "suspected-elder-abuse"
+    ],
+    "blocks_diagnostic_claims": true,
+    "treatment_recommendation_disclaimer_required": true
+  },
+  "ehr_integration": {
+    "supports_smart_on_fhir": false,
+    "supports_cds_hooks": false
+  },
+  "agent_card_uri": "https://triage.kineticgain.com/.well-known/agents/symptom-triage.json",
+  "audit": {
+    "audit_log_uri": "https://triage.kineticgain.com/security/audit",
+    "incident_response_uri": "https://triage.kineticgain.com/security/incident-response",
+    "disclosure_uri": "https://triage.kineticgain.com/changelog"
+  }
+}

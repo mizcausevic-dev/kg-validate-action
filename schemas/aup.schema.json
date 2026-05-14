@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mizcausevic-dev/classroom-ai-aup-spec/blob/main/aup.schema.json",
+  "title": "Classroom AI Acceptable Use Policy",
+  "description": "Schema for a Classroom AI AUP v0.1 document — machine-readable declaration of permitted AI use, disclosure requirements, supervision, and vendor requirements at a district, school, course, or assignment scope.",
+  "type": "object",
+  "required": [
+    "aup_version",
+    "policy_id",
+    "policy_name",
+    "version",
+    "effective_at",
+    "scope",
+    "permitted_use",
+    "disclosure_requirements",
+    "published_by",
+    "published_at"
+  ],
+  "additionalProperties": false,
+
+  "properties": {
+    "aup_version": { "type": "string", "const": "0.1" },
+    "policy_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$" },
+    "policy_name": { "type": "string", "minLength": 1 },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+].+)?$" },
+    "effective_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "replaces": { "type": "string", "format": "uri" },
+    "scope": { "$ref": "#/$defs/Scope" },
+    "permitted_use": { "$ref": "#/$defs/PermittedUse" },
+    "prohibited_use": { "$ref": "#/$defs/ProhibitedUse" },
+    "disclosure_requirements": { "$ref": "#/$defs/DisclosureRequirements" },
+    "supervision": { "$ref": "#/$defs/Supervision" },
+    "vendor_requirements": { "$ref": "#/$defs/VendorRequirements" },
+    "parent_notification": { "$ref": "#/$defs/ParentNotification" },
+    "enforcement": { "$ref": "#/$defs/Enforcement" },
+    "published_by": { "$ref": "#/$defs/PublishedBy" },
+    "published_at": { "type": "string", "format": "date-time" },
+    "audit_log_uri": { "type": "string", "format": "uri" }
+  },
+
+  "allOf": [
+    {
+      "description": "Scope completeness: type=course requires course_ids.",
+      "if": {
+        "properties": { "scope": { "properties": { "type": { "const": "course" } } } },
+        "required": ["scope"]
+      },
+      "then": {
+        "properties": {
+          "scope": {
+            "required": ["course_ids"],
+            "properties": { "course_ids": { "minItems": 1 } }
+          }
+        }
+      }
+    },
+    {
+      "description": "Scope completeness: type=assignment requires assignment_ids.",
+      "if": {
+        "properties": { "scope": { "properties": { "type": { "const": "assignment" } } } },
+        "required": ["scope"]
+      },
+      "then": {
+        "properties": {
+          "scope": {
+            "required": ["assignment_ids"],
+            "properties": { "assignment_ids": { "minItems": 1 } }
+          }
+        }
+      }
+    },
+    {
+      "description": "Extent-vs-roles: assistance_extent_max=none requires permitted_roles to be empty.",
+      "if": {
+        "properties": {
+          "permitted_use": {
+            "properties": { "assistance_extent_max": { "const": "none" } }
+          }
+        },
+        "required": ["permitted_use"]
+      },
+      "then": {
+        "properties": {
+          "permitted_use": {
+            "properties": { "permitted_roles": { "maxItems": 0 } }
+          }
+        }
+      }
+    }
+  ],
+
+  "$defs": {
+    "Role": {
+      "type": "string",
+      "enum": [
+        "brainstorm",
+        "outline",
+        "draft",
+        "edit",
+        "translate",
+        "cite_check",
+        "code_completion",
+        "code_review",
+        "research_synthesis",
+        "tutor_dialog",
+        "image_generation",
+        "data_analysis",
+        "other"
+      ]
+    },
+
+    "Scope": {
+      "type": "object",
+      "required": ["type", "institution_id"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "enum": ["district", "school", "course", "assignment"] },
+        "institution_id": { "type": "string", "minLength": 1 },
+        "grade_bands": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["K-5", "6-8", "9-12", "undergrad", "grad", "adult-ed"]
+          },
+          "uniqueItems": true
+        },
+        "course_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "assignment_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "parent_policy_uri": { "type": "string", "format": "uri" }
+      }
+    },
+
+    "PermittedUse": {
+      "type": "object",
+      "required": ["permitted_roles", "assistance_extent_max"],
+      "additionalProperties": false,
+      "properties": {
+        "permitted_roles": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Role" },
+          "uniqueItems": true
+        },
+        "permitted_tool_categories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "text_chat",
+              "tutoring",
+              "code_assistant",
+              "image_generation",
+              "translation",
+              "research_synthesis",
+              "data_analysis",
+              "general"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "permitted_tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "agent_card_uri": { "type": "string", "format": "uri" },
+              "tutor_card_uri": { "type": "string", "format": "uri" },
+              "notes": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "assistance_extent_max": {
+          "type": "string",
+          "enum": ["none", "minor", "substantial", "primary_author"]
+        }
+      }
+    },
+
+    "ProhibitedUse": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "prohibited_roles": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Role" },
+          "uniqueItems": true
+        },
+        "prohibited_uses": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+
+    "DisclosureRequirements": {
+      "type": "object",
+      "required": ["required_when", "signature_required"],
+      "additionalProperties": false,
+      "properties": {
+        "required_when": { "type": "string", "enum": ["always", "when_used", "never"] },
+        "required_prompt_evidence_mode": {
+          "type": "string",
+          "enum": ["full", "hashed", "omitted", "any"]
+        },
+        "signature_required": { "type": "boolean" },
+        "teacher_acknowledgment_required": { "type": "boolean" },
+        "artifact_hash_required": { "type": "boolean" }
+      }
+    },
+
+    "Supervision": {
+      "type": "object",
+      "required": ["level"],
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["unsupervised", "teacher_visible", "teacher_approved", "proctored"]
+        },
+        "human_in_loop_categories": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+
+    "VendorRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requires_tutor_card": { "type": "boolean" },
+        "requires_agent_card": { "type": "boolean" },
+        "required_compliance": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["ferpa", "coppa", "gdpr", "state-specific"] },
+          "uniqueItems": true
+        },
+        "state_specific_laws": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "required_content_filter_strength_min": {
+          "type": "string",
+          "enum": ["strict", "moderate", "light"]
+        },
+        "requires_mandated_reporter_protocol": { "type": "boolean" },
+        "requires_human_in_loop_for": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "retention_days_max": { "type": "integer", "minimum": 0 },
+        "prohibits_third_party_data_sharing": { "type": "boolean" },
+        "prohibits_model_training_on_student_data": { "type": "boolean" }
+      }
+    },
+
+    "ParentNotification": {
+      "type": "object",
+      "required": ["notification_level", "parent_consent_required"],
+      "additionalProperties": false,
+      "properties": {
+        "notification_level": {
+          "type": "string",
+          "enum": ["none", "at_enrollment", "per_assignment", "per_use"]
+        },
+        "parent_consent_required": { "type": "boolean" },
+        "consent_age_threshold": { "type": "integer", "minimum": 0, "maximum": 25 }
+      }
+    },
+
+    "Enforcement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "violation_response": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "appeals_process_uri": { "type": "string", "format": "uri" }
+      }
+    },
+
+    "PublishedBy": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1 },
+        "contact_uri": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}
