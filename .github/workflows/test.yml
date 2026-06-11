@@ -12,7 +12,7 @@ jobs:
     name: Validate the 30 bundled example fixtures
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Exercise the action against the test fixtures. All 30 should pass —
       # this is the regression gate for both the validator script and the
@@ -26,7 +26,7 @@ jobs:
     name: Verify intentionally bad JSON fails the action
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Write a deliberately invalid fixture
         run: |
